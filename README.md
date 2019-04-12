@@ -67,7 +67,7 @@ Cocol is in a very early stage. Expect changes, bugs and messy code.
 
 ## Contributing
 
-1. Fork it ( https://gitlab.com/cocol/cocol/forks/new )
+1. Fork it ( https://github.com/cocol-project/cocol/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
