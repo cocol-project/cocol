@@ -1,0 +1,6 @@
+master:
+  host: localhost
+  port: 3000
+
+node:
+  max_connections: 3

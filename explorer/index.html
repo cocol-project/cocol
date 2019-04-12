@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Cocol Eplorer</title>
+        <script src="vivagraph.min.js"></script>
+        <script src="elliptic.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/src/sha256.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"> -->
+        <style type="text/css" media="screen">
+         html, body, svg { width: 100%; height: 100%;}
+         html, body {
+             padding: 0; margin: 0; color: #333;
+         }
+         #up {
+             min-height: calc(100vh - 100px);
+             max-width: 100%;
+         }
+         #down {
+             height: 100px;
+             max-width: 100%;
+             background-color: #efefef;
+             border-top: 1px solid #cfcfcf;
+         }
+         #stats {
+             background-color: #efefef;
+             padding: 0;
+             border-right: 1px solid #cfcfcf;
+         }
+         .row {
+             margin-left: 0;
+         }
+         #stats h5 {
+             font-weight: bold;
+             padding: 16px;
+             border-bottom: 2px solid #1eb980;
+             min-width: 100%;
+             text-align: center;
+         }
+         #stats ul {
+             list-style-type: none;
+             padding: 3px;
+             margin: 0;
+             text-align: center;
+         }
+         #stats li {
+             padding: 6px;
+             margin: 2px;
+             display: inline-block;
+             color: #fff;
+             font-size: 12px;
+             font-weight: bold;
+             background-color: #1eb980;
+         }
+         svg text {
+             fill: rgba(0, 0, 0, 0.2);
+             font-weight: bold;
+             font-size: 10px;
+         }
+         ul#blocks {
+             list-style-type: none;
+         }
+         ul#blocks li {
+             display: inline-block;
+             text-align: center;
+             margin: 5px 5px 0 5px;
+             padding: 5px;
+             vertical-align: top;
+             background-color: #ffcf44;
+         }
+        </style>
+    </head>
+    <body>
+            <div id="up" class="row">
+                <div id="stats" class="column column-10">
+                    <h5>Transactions</h5>
+                    <ul id="stats-list">
+                        <li v-for="(amount, hash) in transactions" :key="hash" class="txn">
+                            {{ amount }}
+                        </li>
+                    </ul>
+                </div>
+                <div id="graph" class="column column-90"></div>
+            </div>
+
+            <div id="down" class="row">
+                <div class="column">
+                    <ul id="blocks">
+                        <li v-for="(block, height) in blocks" :key="height">
+                            {{ height }}
+                            <div v-for="sibling in block" :key="sibling.hash">
+                                {{ sibling.hash.substr(-6) }}
+                            </div>
+                        </li>
+                </div>
+            </div>
+
+            <script src="explorer.js"></script>
+    </body>
+</html>

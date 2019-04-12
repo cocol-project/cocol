@@ -1,0 +1,25 @@
+name: cocol
+version: 0.1.0-alpha
+
+authors:
+  - Cristian Serb <mail@cristianserb.com>
+
+targets:
+  cocol:
+    main: src/cocol.cr
+
+crystal: 0.27.2
+
+dependencies:
+  optarg:
+    github: mosop/optarg
+  kemal:
+    github: kemalcr/kemal
+  totem:
+    github: icyleaf/totem
+
+development_dependencies:
+  minitest:
+    github: ysbaddaden/minitest.cr
+
+license: MPL-2.0

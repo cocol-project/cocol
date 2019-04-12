@@ -1,0 +1,42 @@
+# All connected peers
+GET http://localhost:3001/peers
+
+# Create genesis block
+GET http://localhost:3000/genesis
+
+# Mine block and include pending transactions
+GET http://localhost:3027/internal/mine
+
+# All mined blocks
+GET http://localhost:3100/ledger
+
+# All mined blocks
+GET http://localhost:3100/candidates
+
+# All mined blocks
+GET http://localhost:3100/orphans
+
+# All mined blocks
+GET http://localhost:3100/blocks
+
+# All candidate votes
+GET http://localhost:3002/blocks
+
+# All pending transactions
+GET http://localhost:3100/transactions
+
+# Create a new transaction
+POST http://localhost:3001/transactions
+Content-Type: application/json
+{
+  "from": "06303644-4b41-46d6-a094-1393ff6e2521",
+  "to": "06303644-4b41-46d6-a094-1393ff6e2521",
+  "timestamp": 1449970561,
+  "amount": 87,
+  "hash": "a2e8a2181f2783594c8c30faeef2ff2a531e3abe00238d01b0fc2cd75408f791"
+}
+
+# Connect lonely nodes :(
+POST http://localhost:3101/internal/handshake/3034
+Content-Type: application/json
+{}
