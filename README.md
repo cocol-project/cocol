@@ -13,9 +13,11 @@
   <img src="https://img.shields.io/badge/You-got_it_anyway-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
 </div>
 
+
 <p align="center">
   <img src="https://github.com/cocol-project/cocol/blob/master/img/demo.gif" alt="Network" />
 </p>
+
 
 ## About
 The Cocol Project has the goal to lower the entry barrier for developers interested in building blockchains and dApps.
