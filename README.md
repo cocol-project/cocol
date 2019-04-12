@@ -1,5 +1,18 @@
 <h1 align="center" style="font-size: 40px; font-weight: 200;">COCOL!</h1>
 
+<div align="center">
+  <img src="https://img.shields.io/badge/Stability-Experimental-orange.svg?style=for-the-badge" alt="Stability Experimental" />
+  <a href="https://crystal-lang.org">
+    <img src="https://img.shields.io/badge/Crystal-0.27.2-blue.svg?style=for-the-badge" alt="Crystal 0.27.2" />
+  </a>
+  <img src="https://img.shields.io/badge/License-MPL--2.0-green.svg?style=for-the-badge" alt="License MPL-2.0" />
+</div>
+
+<div align="center">
+  <img src="https://img.shields.io/badge/You-didn't_ask_for_this-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
+  <img src="https://img.shields.io/badge/You-got_it_anyway-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
+</div>
+
 <p align="center">
   <img src="https://github.com/cocol-project/cocol/blob/master/img/demo.gif" alt="Network" />
 </p>
