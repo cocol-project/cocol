@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="https://github.com/cocol-project/cocol/blob/master/img/header.png" alt="Header" />
-</p>
-
-<h1 align="center" style="font-size: 40px; font-weight: 200;">COCOL!</p>
+<h1 align="center" style="font-size: 40px; font-weight: 200;">COCOL!</h1>
 
 <p align="center">
   <img src="https://github.com/cocol-project/cocol/blob/master/img/demo.gif" alt="Network" />
