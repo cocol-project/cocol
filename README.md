@@ -8,11 +8,6 @@
   <img src="https://img.shields.io/badge/License-MPL--2.0-green.svg?style=flat-square" alt="License MPL-2.0" />
 </div>
 
-<div align="center">
-  <img src="https://img.shields.io/badge/You-didn't_ask_for_this-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
-  <img src="https://img.shields.io/badge/You-got_it_anyway-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
-</div>
-
 ---
 
 <p align="center">
