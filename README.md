@@ -21,11 +21,11 @@
 
 ---
 
-## About
+## About 🌐
 The Cocol Project has the goal to lower the entry barrier for developers interested in building blockchains and dApps.
 There is still a long way to go and your help is needed.
 
-## Installation
+## Installation 🏹
 Cocol is written in [Crystal](https://crystal-lang.org/), so make sure to follow the [installation instructions](https://crystal-lang.org/reference/installation/) first.
 
 After setting up Crystal you can clone the Cocol repository and install the dependencies:
@@ -35,7 +35,7 @@ After setting up Crystal you can clone the Cocol repository and install the depe
 > shards install
 ```
 
-## Usage
+## Usage ⚔
 Make your changes to the code-base and than build Cocol
 ```
 > shards build
@@ -78,11 +78,11 @@ Each one of the nodes has a REST API on the corresponding port (e.g. `3001`)
 
 You can create transactions or query the current ledger
 
-## Development
+## Development 👨‍💻👩‍💻
 
 Cocol is in a very early stage. Expect changes, bugs and messy code.
 
-## Contributing
+## Contributing 👷‍♂️👷‍♀️
 
 1. Fork it ( https://github.com/cocol-project/cocol/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
