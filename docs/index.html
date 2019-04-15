@@ -285,56 +285,56 @@
   &lt;img src="https://img.shields.io/badge/License-MPL--2.0-green.svg?style=flat-square" alt="License MPL-2.0" />
 &lt;/div></p>
 
-<p>&lt;div align="center">
-  &lt;img src="https://img.shields.io/badge/You-didn't_ask_for_this-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
-  &lt;img src="https://img.shields.io/badge/You-got_it_anyway-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
-&lt;/div></p>
-
-<p>&lt;p align="center">
-  &lt;img src="https://github.com/cocol-project/cocol/blob/master/img/demo.gif" alt="Network" />
+<hr/><p>&lt;p align="center">
+  &lt;img src="https://github.com/cocol-project/cocol/blob/master/img/demo2.gif" alt="Network" />
 &lt;/p></p>
 
-<hr/><h2>About</h2>
+<hr/><h2>About 🌐</h2>
 
 <p>The Cocol Project has the goal to lower the entry barrier for developers interested in building blockchains and dApps.
 There is still a long way to go and your help is needed.</p>
 
-<h2>Installation</h2>
+<h2>Installation 🏹</h2>
 
 <p>Cocol is written in <a href="https://crystal-lang.org/" target="_blank">Crystal</a>, so make sure to follow the <a href="https://crystal-lang.org/reference/installation/" target="_blank">installation instructions</a> first.</p>
 
 <p>After setting up Crystal you can clone the Cocol repository and install the dependencies:</p>
 
-<pre><code><span class="o">&gt;</span> git clone https<span class="n">://</span>gitlab.com<span class="s">/cocol/</span>cocol.git
-<span class="o">&gt;</span> cd cocol
-<span class="o">&gt;</span> shards install</code></pre>
+<pre><code class="language-shell">> git clone https://gitlab.com/cocol/cocol.git
+> cd cocol
+> shards install</code></pre>
 
-<h2>Usage</h2>
+<h2>Usage ⚔</h2>
 
 <p>Make your changes to the code-base and than build Cocol</p>
 
-<pre><code><span class="o">&gt;</span> shards build</code></pre>
+<pre><code class="language-shell">> shards build</code></pre>
 
 <p>The binary <code>./bin/cocol</code> offers the following CLI options</p>
 
-<pre><code><span class="t">Options</span>:
+<pre><code class="language-text">Options:
 
-<span class="o">-</span>p </code></pre>
+-p --port            The port your Cocol node is going to run on
+-m --master          Making this node a master (there can only be one)
+--max-connections    Setting the max-connections for peers.
+--miner              Making this node a miner
+--update             Triggering an update on launch (will catch up with the current height)
+</code></pre>
 
 <p>There is also a script that starts multiple nodes and the master for you</p>
 
-<pre><code><span class="o">&gt;</span> .<span class="s">/script/</span>start.sh <span class="n">66</span> <span class="n">5</span></code></pre>
+<pre><code class="language-shell">> ./script/start.sh 66 5</code></pre>
 
 <p>First number is the amount of nodes and the second max-connections per node.
 It will start the master node with the port <code>3000</code> and every other node with <code>3000 + n</code></p>
 
 <p>You can now start one or several miner like this:</p>
 
-<pre><code><span class="o">&gt;</span> .<span class="s">/cocol -p 4100 --max-connections 5 --miner</code></pre>
+<pre><code class="language-shell">> ./cocol -p 4100 --max-connections 5 --miner</code></pre>
 
 <p>Now go ahead and open the explorer in a browser:</p>
 
-<pre><code><span class="o">&gt;</span> open .<span class="s">/explorer/</span>index.html</code></pre>
+<pre><code class="language-shell">> open ./explorer/index.html</code></pre>
 
 <p>You should see 66 nodes and a miner (red border)</p>
 
@@ -342,17 +342,17 @@ It will start the master node with the port <code>3000</code> and every other no
 
 <p>You can create transactions or query the current ledger</p>
 
-<h2>Development</h2>
+<h2>Development 👨‍💻👩‍💻</h2>
 
 <p>Cocol is in a very early stage. Expect changes, bugs and messy code.</p>
 
-<h2>Contributing</h2>
+<h2>Contributing 👷‍♂️👷‍♀️</h2>
 
 <ol><li>Fork it ( https://github.com/cocol-project/cocol/fork )</li><li>Create your feature branch (git checkout -b my-new-feature)</li><li>Commit your changes (git commit -am 'Add some feature')</li><li>Push to the branch (git push origin my-new-feature)</li><li>Create a new Pull Request</li></ol>
 
 <h2>Contributors</h2>
 
-<ul><li><a href="https://github.com/cserb" target="_blank">github: [cserb</a> <a href="http://twitter.com/cerbivore" target="_blank">twitter: [@cerbivore</a> Cristian Serb - creator, maintainer</li></ul>
+<ul><li>github: <a href="https://github.com/cserb" target="_blank">cserb</a> | twitter: <a href="http://twitter.com/cerbivore" target="_blank">@cerbivore</a> | Cristian Șerb - creator, maintainer</li></ul>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@ There is still a long way to go and your help is needed.
 Cocol is written in [Crystal](https://crystal-lang.org/), so make sure to follow the [installation instructions](https://crystal-lang.org/reference/installation/) first.
 
 After setting up Crystal you can clone the Cocol repository and install the dependencies:
-```
+```shell
 > git clone https://gitlab.com/cocol/cocol.git
 > cd cocol
 > shards install
@@ -32,12 +32,12 @@ After setting up Crystal you can clone the Cocol repository and install the depe
 
 ## Usage ⚔
 Make your changes to the code-base and than build Cocol
-```
+```shell
 > shards build
 ```
 The binary `./bin/cocol` offers the following CLI options
 
-```
+```text
 Options:
 
 -p --port            The port your Cocol node is going to run on
@@ -50,7 +50,7 @@ Options:
 
 There is also a script that starts multiple nodes and the master for you
 
-```
+```shell
 > ./script/start.sh 66 5
 ```
 First number is the amount of nodes and the second max-connections per node.
@@ -58,12 +58,12 @@ It will start the master node with the port `3000` and every other node with `30
 
 
 You can now start one or several miner like this:
-```
+```shell
 > ./cocol -p 4100 --max-connections 5 --miner
 ```
 
 Now go ahead and open the explorer in a browser:
-```
+```shell
 > open ./explorer/index.html
 ```
 
@@ -87,4 +87,4 @@ Cocol is in a very early stage. Expect changes, bugs and messy code.
 
 ## Contributors
 
-- [github: [cserb]](https://github.com/cserb) [twitter: [@cerbivore]](http://twitter.com/cerbivore) Cristian Serb - creator, maintainer
+- github: [cserb](https://github.com/cserb) | twitter: [@cerbivore](http://twitter.com/cerbivore) | Cristian Șerb - creator, maintainer
