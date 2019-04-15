@@ -6,7 +6,6 @@ require "uuid"
 require "uuid/json"
 
 require "./cocol/cli/argument"
-require "./cocol/cli/logger"
 
 require "./cocol/node/settings"
 require "./cocol/node.cr"
