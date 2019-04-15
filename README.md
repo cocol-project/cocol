@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/You-got_it_anyway-yellow.svg?style=flat-square" alt="IDDQD IDKFA" />
 </div>
 
+---
 
 <p align="center">
   <img src="https://github.com/cocol-project/cocol/blob/master/img/demo2.gif" alt="Network" />
