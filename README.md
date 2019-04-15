@@ -17,7 +17,7 @@ Cocol is written in [Crystal](https://crystal-lang.org/), so make sure to follow
 
 After setting up Crystal you can clone the Cocol repository and install the dependencies:
 ```shell
-> git clone https://gitlab.com/cocol/cocol.git
+> git clone https://github.com/cocol-project/cocol.git
 > cd cocol
 > shards install
 ```
