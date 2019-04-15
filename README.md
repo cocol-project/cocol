@@ -15,7 +15,7 @@
 
 
 <p align="center">
-  <img src="https://github.com/cocol-project/cocol/blob/master/img/demo.gif" alt="Network" />
+  <img src="https://github.com/cocol-project/cocol/blob/master/img/demo2.gif" alt="Network" />
 </p>
 
 ---
