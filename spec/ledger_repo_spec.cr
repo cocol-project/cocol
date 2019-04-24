@@ -20,7 +20,7 @@ describe "Ledger::Repo" do
     end
 
     it "establishes given block" do
-      Ledger::Repo.establish(block_a.hash)
+      Ledger::Repo.establish(block_a.hash, block_a.height)
 
       Ledger::Repo.ledger.should contain(block_a.hash)
       Ledger::Repo.established_height.should eq(1)
