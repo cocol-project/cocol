@@ -53,7 +53,9 @@ module Node
         pp "[#{Time.now}] [Node: #{Node.settings.port}] Mined: #{new_block.hash}"
         Node::Ledger::Repo.delete_transactions(transactions)
         workflow_assign_block(new_block)
-        spawn Node::Ledger.workflow_broadcast_block(new_block)
+
+        spawn { Messenger.broadcast to: "/blocks", body: new_block.to_json }
+
         spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
         spawn Event.broadcast(Event.block(new_block).to_json)
       end
@@ -66,27 +68,6 @@ module Node
       # compare with my ledger
 
       Node::Ledger::Repo.ledger.concat(ledger)
-    end
-
-
-    def workflow_broadcast_block(block : Node::Ledger::Model::Block) : Void
-      Messenger::Repo.peers.each do |peer|
-        # sleep 0.2
-        client = HTTP::Client.new(peer.ip_addr, peer.handshake.port)
-        begin
-          client.post(
-            "/blocks",
-            headers: HTTP::Headers{
-              "Content-Type" => "application/json",
-              "X-Node-Id" => Node.settings.port.to_s
-            },
-            body: block.to_json
-          )
-        rescue
-          pp "Peer #{peer.handshake.port} is not responding"
-        end
-        client.close
-      end
     end
 
     def first_candidate : String

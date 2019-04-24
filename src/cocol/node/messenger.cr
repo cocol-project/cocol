@@ -28,11 +28,12 @@ module Messenger
 
   # This is more of an e2e test
   def establish_network_position
-    # TODO: there should be a config API
-    config = Totem.from_file("/home/cris/Projects/crystal/cocol/config.yml")
-    master = config.get("master").as_h
+    # TODO: totem broke with crystal 0.28.0
+    # config = Totem.from_file("/home/cris/Projects/crystal/cocol/config.yml")
+    # master = config.get("master").as_h
+    master = {"host" => "localhost", "port" => 3000}
 
-    master = HTTP::Client.new(master["host"].as_s, master["port"].as_i)
+    master = HTTP::Client.new(master["host"].as(String), master["port"].as(Int32))
     Messenger.handshake with: master
 
     # now get all peers master knows about
@@ -42,7 +43,7 @@ module Messenger
     peers = peers.reject! { |p| p.handshake.port == Node.settings.port }
     Messenger::Repo.known_peers.concat(peers)
 
-    # now establish connection to peers if free spots are available
+    # now establish connection to peers if free slots are available
     peers.sample(Messenger.connections_free).each do |peer|
       sleep 2
       idents = Messenger::Repo.peers.map { |_peer| _peer.handshake.ident }
@@ -61,19 +62,17 @@ module Messenger
     master.close
   end
 
-
-  def broadcast_transaction(transaction : Node::Ledger::Model::Transaction) : Void
+  def broadcast(to endpoint : String, body : String) : Void
     Messenger::Repo.peers.each do |peer|
-      # sleep 0.2
       client = HTTP::Client.new(peer.ip_addr, peer.handshake.port)
       begin
         client.post(
-          "/transactions",
+          endpoint,
           headers: HTTP::Headers{
             "Content-Type" => "application/json",
             "X-Node-Id" => Node.settings.port.to_s
           },
-          body: transaction.to_json
+          body: body
         )
       rescue
         pp "Peer #{peer.handshake.port} is not responding"
@@ -87,4 +86,5 @@ module Messenger
     return 0 if free < 0
     free
   end
+
 end

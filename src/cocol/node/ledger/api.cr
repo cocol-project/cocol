@@ -2,7 +2,7 @@ post "/transactions" do |env|
   new_txn = Node::Ledger::Model::Transaction.from_json(
     env.request.body.not_nil!)
   if Node::Ledger::Repo.save_transaction(new_txn)
-    spawn Messenger.broadcast_transaction(new_txn)
+    spawn { Messenger.broadcast to: "/transactions", body: new_txn.to_json }
 
     if Node.settings.miner
       spawn Event.broadcast(Event.transaction("onTxn", new_txn).to_json)
@@ -22,7 +22,7 @@ post "/blocks" do |env|
   if Node::Ledger::Repo.save_block(new_block)
     spawn do
       Node::Ledger.workflow_assign_block(new_block)
-      Node::Ledger.workflow_broadcast_block(new_block)
+      Messenger.broadcast to: "/blocks", body: new_block.to_json
       spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
     end
   end
