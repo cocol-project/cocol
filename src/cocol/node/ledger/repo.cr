@@ -1,10 +1,10 @@
 require "./model/*"
 
-module Node::Ledger
+module Ledger
   module Repo
     extend self
 
-    include Node::Ledger::Model
+    include Ledger::Model
 
     alias ParentHash = String
     alias BlockHash = String
@@ -87,7 +87,7 @@ module Node::Ledger
       true
     end
 
-    def delete_transactions(mined_transactions : Array(Node::Ledger::Model::Transaction)) : Void
+    def delete_transactions(mined_transactions : Array(Ledger::Model::Transaction)) : Void
       mined_transactions.each do |txn|
         pending_transactions.delete(txn.hash)
       end

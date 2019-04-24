@@ -86,5 +86,4 @@ module Messenger
     return 0 if free < 0
     free
   end
-
 end

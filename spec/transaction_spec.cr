@@ -1,7 +1,7 @@
 require "spec"
 require "../src/cocol/node/ledger/model/transaction.cr"
 
-describe "Node::Ledger::Model::Transaction" do
+describe "Ledger::Model::Transaction" do
   context "JSON Serializable" do
     txn_json = {
       from: "Olivia",
@@ -12,7 +12,7 @@ describe "Node::Ledger::Model::Transaction" do
     }.to_json
 
     it "should initialize successfully" do
-      txn = Node::Ledger::Model::Transaction.from_json(txn_json)
+      txn = Ledger::Model::Transaction.from_json(txn_json)
 
       txn.from.should eq("Olivia")
       txn.to.should eq("Teddyshum")
@@ -23,7 +23,7 @@ describe "Node::Ledger::Model::Transaction" do
   end
 
   context "Construct" do
-    txn = Node::Ledger::Model::Transaction.new(
+    txn = Ledger::Model::Transaction.new(
       from: "Olivia",
       to: "Teddyshum",
       amount: 100_f32

@@ -14,7 +14,7 @@
 </script>
 
   <meta id="repository-name" content="github.com/cocol-project/cocol">
-  <title>Messenger::Struct::Handshake - github.com/cocol-project/cocol</title>
+  <title>Ledger::Model::Transaction - github.com/cocol-project/cocol</title>
 </head>
 <body>
 
@@ -111,12 +111,12 @@
       
     </li>
   
-  <li class="parent " data-id="github.com/cocol-project/cocol/Ledger" data-name="ledger">
+  <li class="parent open current" data-id="github.com/cocol-project/cocol/Ledger" data-name="ledger">
       <a href="../../Ledger.html">Ledger</a>
       
         <ul>
   
-  <li class="parent " data-id="github.com/cocol-project/cocol/Ledger/Model" data-name="ledger::model">
+  <li class="parent open current" data-id="github.com/cocol-project/cocol/Ledger/Model" data-name="ledger::model">
       <a href="../../Ledger/Model.html">Model</a>
       
         <ul>
@@ -126,7 +126,7 @@
       
     </li>
   
-  <li class=" " data-id="github.com/cocol-project/cocol/Ledger/Model/Transaction" data-name="ledger::model::transaction">
+  <li class=" current" data-id="github.com/cocol-project/cocol/Ledger/Model/Transaction" data-name="ledger::model::transaction">
       <a href="../../Ledger/Model/Transaction.html">Transaction</a>
       
     </li>
@@ -211,7 +211,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="github.com/cocol-project/cocol/Messenger" data-name="messenger">
+  <li class="parent " data-id="github.com/cocol-project/cocol/Messenger" data-name="messenger">
       <a href="../../Messenger.html">Messenger</a>
       
         <ul>
@@ -221,12 +221,12 @@
       
     </li>
   
-  <li class="parent open current" data-id="github.com/cocol-project/cocol/Messenger/Struct" data-name="messenger::struct">
+  <li class="parent " data-id="github.com/cocol-project/cocol/Messenger/Struct" data-name="messenger::struct">
       <a href="../../Messenger/Struct.html">Struct</a>
       
         <ul>
   
-  <li class=" current" data-id="github.com/cocol-project/cocol/Messenger/Struct/Handshake" data-name="messenger::struct::handshake">
+  <li class=" " data-id="github.com/cocol-project/cocol/Messenger/Struct/Handshake" data-name="messenger::struct::handshake">
       <a href="../../Messenger/Struct/Handshake.html">Handshake</a>
       
     </li>
@@ -270,12 +270,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">struct</span> Messenger::Struct::Handshake
+  <span class="kind">class</span> Ledger::Model::Transaction
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Messenger/Struct/Handshake.html">Messenger::Struct::Handshake</a></li><li class="superclass">Struct</li><li class="superclass">Value</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Ledger/Model/Transaction.html">Ledger::Model::Transaction</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -303,8 +303,8 @@
   <h2>Defined in:</h2>
   
     
-      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L6" target="_blank">
-        cocol/node/messenger/struct/handshake.cr
+      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L5" target="_blank">
+        cocol/node/ledger/model/transaction.cr
       </a>
     
     <br/>
@@ -318,7 +318,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28ident%2Cport%29-class-method" class="signature"><strong>.new</strong>(ident, port)</a>
+        <a href="#new%28from%2Cto%2Camount%29-class-method" class="signature"><strong>.new</strong>(from, to, amount)</a>
         
       </li>
     
@@ -337,22 +337,42 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#ident%3AUUID-instance-method" class="signature"><strong>#ident</strong> : UUID</a>
+        <a href="#amount%3AFloat32-instance-method" class="signature"><strong>#amount</strong> : Float32</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#ident%3D%28ident%3AUUID%29-instance-method" class="signature"><strong>#ident=</strong>(ident : UUID)</a>
+        <a href="#amount%3D%28amount%3AFloat32%29-instance-method" class="signature"><strong>#amount=</strong>(amount : Float32)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#port%3AInt32-instance-method" class="signature"><strong>#port</strong> : Int32</a>
+        <a href="#from%3AString-instance-method" class="signature"><strong>#from</strong> : String</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#port%3D%28port%3AInt32%29-instance-method" class="signature"><strong>#port=</strong>(port : Int32)</a>
+        <a href="#from%3D%28from%3AString%29-instance-method" class="signature"><strong>#from=</strong>(from : String)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#hash%3AString-instance-method" class="signature"><strong>#hash</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#timestamp%3AInt64-instance-method" class="signature"><strong>#timestamp</strong> : Int64</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#to%3AString-instance-method" class="signature"><strong>#to</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#to%3D%28to%3AString%29-instance-method" class="signature"><strong>#to=</strong>(to : String)</a>
         
       </li>
     
@@ -394,33 +414,23 @@
 
 
   
-    
-
-
-    
-
-
-    
-
-
-  
 </div>
 
 
   <h2>Constructor Detail</h2>
   
-    <div class="entry-detail" id="new(ident,port)-class-method">
+    <div class="entry-detail" id="new(from,to,amount)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(ident, port)
+        def self.<strong>new</strong>(from, to, amount)
 
-        <a class="method-permalink" href="#new%28ident%2Cport%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28from%2Cto%2Camount%29-class-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L12" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L14" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -436,7 +446,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L7" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L6" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -448,66 +458,130 @@
 
   <h2>Instance Method Detail</h2>
   
-    <div class="entry-detail" id="ident:UUID-instance-method">
+    <div class="entry-detail" id="amount:Float32-instance-method">
       <div class="signature">
         
-        def <strong>ident</strong> : UUID
+        def <strong>amount</strong> : Float32
 
-        <a class="method-permalink" href="#ident%3AUUID-instance-method">#</a>
+        <a class="method-permalink" href="#amount%3AFloat32-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L11" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L12" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="ident=(ident:UUID)-instance-method">
+    <div class="entry-detail" id="amount=(amount:Float32)-instance-method">
       <div class="signature">
         
-        def <strong>ident=</strong>(ident : UUID)
+        def <strong>amount=</strong>(amount : Float32)
 
-        <a class="method-permalink" href="#ident%3D%28ident%3AUUID%29-instance-method">#</a>
+        <a class="method-permalink" href="#amount%3D%28amount%3AFloat32%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L15" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L16" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="port:Int32-instance-method">
+    <div class="entry-detail" id="from:String-instance-method">
       <div class="signature">
         
-        def <strong>port</strong> : Int32
+        def <strong>from</strong> : String
 
-        <a class="method-permalink" href="#port%3AInt32-instance-method">#</a>
+        <a class="method-permalink" href="#from%3AString-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L12" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L10" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="port=(port:Int32)-instance-method">
+    <div class="entry-detail" id="from=(from:String)-instance-method">
       <div class="signature">
         
-        def <strong>port=</strong>(port : Int32)
+        def <strong>from=</strong>(from : String)
 
-        <a class="method-permalink" href="#port%3D%28port%3AInt32%29-instance-method">#</a>
+        <a class="method-permalink" href="#from%3D%28from%3AString%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L16" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L14" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="hash:String-instance-method">
+      <div class="signature">
+        
+        def <strong>hash</strong> : String
+
+        <a class="method-permalink" href="#hash%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L13" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="timestamp:Int64-instance-method">
+      <div class="signature">
+        
+        def <strong>timestamp</strong> : Int64
+
+        <a class="method-permalink" href="#timestamp%3AInt64-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L14" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="to:String-instance-method">
+      <div class="signature">
+        
+        def <strong>to</strong> : String
+
+        <a class="method-permalink" href="#to%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L11" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="to=(to:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>to=</strong>(to : String)
+
+        <a class="method-permalink" href="#to%3D%28to%3AString%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L15" target="_blank">View source</a>]
         
       </div>
     </div>

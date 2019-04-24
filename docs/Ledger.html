@@ -14,7 +14,7 @@
 </script>
 
   <meta id="repository-name" content="github.com/cocol-project/cocol">
-  <title>LedgerAbstract - github.com/cocol-project/cocol</title>
+  <title>Ledger - github.com/cocol-project/cocol</title>
 </head>
 <body>
 
@@ -111,7 +111,7 @@
       
     </li>
   
-  <li class="parent " data-id="github.com/cocol-project/cocol/Ledger" data-name="ledger">
+  <li class="parent open current" data-id="github.com/cocol-project/cocol/Ledger" data-name="ledger">
       <a href="Ledger.html">Ledger</a>
       
         <ul>
@@ -201,7 +201,7 @@
       
     </li>
   
-  <li class=" current" data-id="github.com/cocol-project/cocol/LedgerAbstract" data-name="ledgerabstract">
+  <li class=" " data-id="github.com/cocol-project/cocol/LedgerAbstract" data-name="ledgerabstract">
       <a href="LedgerAbstract.html">LedgerAbstract</a>
       
     </li>
@@ -270,12 +270,11 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">abstract class</span> LedgerAbstract
+  <span class="kind">module</span> Ledger
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="LedgerAbstract.html">LedgerAbstract</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -285,6 +284,12 @@
 
 
 
+  <h2>Extended Modules</h2>
+  <ul class="other-types-list">
+  
+    <li class="other-type"><a href="Ledger.html">Ledger</a></li>
+  
+  </ul>
 
 
 
@@ -296,8 +301,29 @@
   <h2>Defined in:</h2>
   
     
-      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/abstract/ledger_abstract.cr#L1" target="_blank">
-        cocol/node/abstract/ledger_abstract.cr
+      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/transaction.cr#L4" target="_blank">
+        cocol/node/ledger/model/transaction.cr
+      </a>
+    
+    <br/>
+  
+    
+      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/block.cr#L7" target="_blank">
+        cocol/node/ledger/model/block.cr
+      </a>
+    
+    <br/>
+  
+    
+      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/repo.cr#L3" target="_blank">
+        cocol/node/ledger/repo.cr
+      </a>
+    
+    <br/>
+  
+    
+      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger.cr#L13" target="_blank">
+        cocol/node/ledger.cr
       </a>
     
     <br/>
@@ -315,7 +341,32 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#start-instance-method" class="signature"><strong>#start</strong></a>
+        <a href="#first_candidate%3AString-instance-method" class="signature"><strong>#first_candidate</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#update_ledger%3AVoid-instance-method" class="signature"><strong>#update_ledger</strong> : Void</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#workflow_assign_block%28block%3ALedger%3A%3AModel%3A%3ABlock%29%3AVoid-instance-method" class="signature"><strong>#workflow_assign_block</strong>(block : Ledger::Model::Block) : Void</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#workflow_fetch_ledger%28client%3AHTTP%3A%3AClient%29%3AVoid-instance-method" class="signature"><strong>#workflow_fetch_ledger</strong>(client : HTTP::Client) : Void</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#workflow_genesis_block%3AVoid-instance-method" class="signature"><strong>#workflow_genesis_block</strong> : Void</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#workflow_mine%28transactions%3AArray%28Ledger%3A%3AModel%3A%3ATransaction%29%2Cdifficulty_bits%3AInt32%3D1%29%3AVoid-instance-method" class="signature"><strong>#workflow_mine</strong>(transactions : Array(Ledger::Model::Transaction), difficulty_bits : Int32 = <span class="n">1</span>) : Void</a>
         
       </li>
     
@@ -327,26 +378,6 @@
 
 <div class="methods-inherited">
   
-    
-
-
-    
-
-
-    
-
-
-  
-    
-
-
-    
-
-
-    
-
-
-  
 </div>
 
 
@@ -356,18 +387,98 @@
 
   <h2>Instance Method Detail</h2>
   
-    <div class="entry-detail" id="start-instance-method">
+    <div class="entry-detail" id="first_candidate:String-instance-method">
       <div class="signature">
-        abstract 
-        def <strong>start</strong>
+        
+        def <strong>first_candidate</strong> : String
 
-        <a class="method-permalink" href="#start-instance-method">#</a>
+        <a class="method-permalink" href="#first_candidate%3AString-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/abstract/ledger_abstract.cr#L2" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger.cr#L72" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="update_ledger:Void-instance-method">
+      <div class="signature">
+        
+        def <strong>update_ledger</strong> : Void
+
+        <a class="method-permalink" href="#update_ledger%3AVoid-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger.cr#L108" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="workflow_assign_block(block:Ledger::Model::Block):Void-instance-method">
+      <div class="signature">
+        
+        def <strong>workflow_assign_block</strong>(block : <a href="Ledger/Model/Block.html">Ledger::Model::Block</a>) : Void
+
+        <a class="method-permalink" href="#workflow_assign_block%28block%3ALedger%3A%3AModel%3A%3ABlock%29%3AVoid-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger.cr#L79" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="workflow_fetch_ledger(client:HTTP::Client):Void-instance-method">
+      <div class="signature">
+        
+        def <strong>workflow_fetch_ledger</strong>(client : HTTP::Client) : Void
+
+        <a class="method-permalink" href="#workflow_fetch_ledger%28client%3AHTTP%3A%3AClient%29%3AVoid-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger.cr#L63" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="workflow_genesis_block:Void-instance-method">
+      <div class="signature">
+        
+        def <strong>workflow_genesis_block</strong> : Void
+
+        <a class="method-permalink" href="#workflow_genesis_block%3AVoid-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger.cr#L18" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="workflow_mine(transactions:Array(Ledger::Model::Transaction),difficulty_bits:Int32=1):Void-instance-method">
+      <div class="signature">
+        
+        def <strong>workflow_mine</strong>(transactions : Array(<a href="Ledger/Model/Transaction.html">Ledger::Model::Transaction</a>), difficulty_bits : Int32 = <span class="n">1</span>) : Void
+
+        <a class="method-permalink" href="#workflow_mine%28transactions%3AArray%28Ledger%3A%3AModel%3A%3ATransaction%29%2Cdifficulty_bits%3AInt32%3D1%29%3AVoid-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger.cr#L31" target="_blank">View source</a>]
         
       </div>
     </div>

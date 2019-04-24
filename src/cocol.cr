@@ -34,11 +34,11 @@ class Cocol::App
       sleep 1
 
       pending_transactions_count = (
-        pending_transactions = Node::Ledger::Repo.pending_transactions.values
+        pending_transactions = Ledger::Repo.pending_transactions.values
       ).size
 
       if pending_transactions_count >= threshold
-        Node::Ledger.workflow_mine(pending_transactions)
+        Ledger.workflow_mine(pending_transactions)
       end
     end
   end
@@ -58,7 +58,7 @@ class Cocol::App
     end
 
     if args.update?
-      spawn Node::Ledger.update_ledger
+      spawn Ledger.update_ledger
     end
 
     cocol.run_api(port: args.port.to_i32)
