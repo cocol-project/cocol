@@ -14,7 +14,7 @@
 </script>
 
   <meta id="repository-name" content="github.com/cocol-project/cocol">
-  <title>Messenger::Struct::Handshake - github.com/cocol-project/cocol</title>
+  <title>Ledger::PoW::BlockData - github.com/cocol-project/cocol</title>
 </head>
 <body>
 
@@ -111,7 +111,7 @@
       
     </li>
   
-  <li class="parent " data-id="github.com/cocol-project/cocol/Ledger" data-name="ledger">
+  <li class="parent open current" data-id="github.com/cocol-project/cocol/Ledger" data-name="ledger">
       <a href="../../Ledger.html">Ledger</a>
       
         <ul>
@@ -136,12 +136,12 @@
       
     </li>
   
-  <li class="parent " data-id="github.com/cocol-project/cocol/Ledger/PoW" data-name="ledger::pow">
+  <li class="parent open current" data-id="github.com/cocol-project/cocol/Ledger/PoW" data-name="ledger::pow">
       <a href="../../Ledger/PoW.html">PoW</a>
       
         <ul>
   
-  <li class=" " data-id="github.com/cocol-project/cocol/Ledger/PoW/BlockData" data-name="ledger::pow::blockdata">
+  <li class=" current" data-id="github.com/cocol-project/cocol/Ledger/PoW/BlockData" data-name="ledger::pow::blockdata">
       <a href="../../Ledger/PoW/BlockData.html">BlockData</a>
       
     </li>
@@ -211,7 +211,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="github.com/cocol-project/cocol/Messenger" data-name="messenger">
+  <li class="parent " data-id="github.com/cocol-project/cocol/Messenger" data-name="messenger">
       <a href="../../Messenger.html">Messenger</a>
       
         <ul>
@@ -221,12 +221,12 @@
       
     </li>
   
-  <li class="parent open current" data-id="github.com/cocol-project/cocol/Messenger/Struct" data-name="messenger::struct">
+  <li class="parent " data-id="github.com/cocol-project/cocol/Messenger/Struct" data-name="messenger::struct">
       <a href="../../Messenger/Struct.html">Struct</a>
       
         <ul>
   
-  <li class=" current" data-id="github.com/cocol-project/cocol/Messenger/Struct/Handshake" data-name="messenger::struct::handshake">
+  <li class=" " data-id="github.com/cocol-project/cocol/Messenger/Struct/Handshake" data-name="messenger::struct::handshake">
       <a href="../../Messenger/Struct/Handshake.html">Handshake</a>
       
     </li>
@@ -270,12 +270,12 @@
 <div class="main-content">
 <h1 class="type-name">
 
-  <span class="kind">struct</span> Messenger::Struct::Handshake
+  <span class="kind">struct</span> Ledger::PoW::BlockData
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Messenger/Struct/Handshake.html">Messenger::Struct::Handshake</a></li><li class="superclass">Struct</li><li class="superclass">Value</li><li class="superclass">Object</li></ul>
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Ledger/PoW/BlockData.html">Ledger::PoW::BlockData</a></li><li class="superclass">Struct</li><li class="superclass">Value</li><li class="superclass">Object</li></ul>
 
 
 
@@ -283,13 +283,6 @@
 
 
 
-
-  <h2>Included Modules</h2>
-  <ul class="other-types-list">
-  
-    <li class="other-type">JSON::Serializable</li>
-  
-  </ul>
 
 
 
@@ -303,8 +296,8 @@
   <h2>Defined in:</h2>
   
     
-      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L6" target="_blank">
-        cocol/node/messenger/struct/handshake.cr
+      <a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/block.cr#L18" target="_blank">
+        cocol/node/ledger/model/block.cr
       </a>
     
     <br/>
@@ -318,12 +311,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28ident%2Cport%29-class-method" class="signature"><strong>.new</strong>(ident, port)</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#new%28pull%3AJSON%3A%3APullParser%29-class-method" class="signature"><strong>.new</strong>(pull : JSON::PullParser)</a>
+        <a href="#new%28height%3AUInt64%2Ctimestamp%3AInt64%2Ctransactions%3AArray%28String%29%2Cprevious_hash%3ABlockHash%29-class-method" class="signature"><strong>.new</strong>(height : UInt64, timestamp : Int64, transactions : Array(String), previous_hash : BlockHash)</a>
         
       </li>
     
@@ -337,22 +325,37 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#ident%3AUUID-instance-method" class="signature"><strong>#ident</strong> : UUID</a>
+        <a href="#clone-instance-method" class="signature"><strong>#clone</strong></a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#ident%3D%28ident%3AUUID%29-instance-method" class="signature"><strong>#ident=</strong>(ident : UUID)</a>
+        <a href="#copy_with%28height_height%3D%40height%2Ctimestamp_timestamp%3D%40timestamp%2Ctransactions_transactions%3D%40transactions%2Cprevious_hash_previous_hash%3D%40previous_hash%29-instance-method" class="signature"><strong>#copy_with</strong>(height _height = @height, timestamp _timestamp = @timestamp, transactions _transactions = @transactions, previous_hash _previous_hash = @previous_hash)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#port%3AInt32-instance-method" class="signature"><strong>#port</strong> : Int32</a>
+        <a href="#height%3AUInt64-instance-method" class="signature"><strong>#height</strong> : UInt64</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#port%3D%28port%3AInt32%29-instance-method" class="signature"><strong>#port=</strong>(port : Int32)</a>
+        <a href="#previous_hash%3ABlockHash-instance-method" class="signature"><strong>#previous_hash</strong> : BlockHash</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#timestamp%3AInt64-instance-method" class="signature"><strong>#timestamp</strong> : Int64</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#to_hash_input%3AString-instance-method" class="signature"><strong>#to_hash_input</strong> : String</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#transactions%3AArray%28String%29-instance-method" class="signature"><strong>#transactions</strong> : Array(String)</a>
         
       </li>
     
@@ -394,49 +397,23 @@
 
 
   
-    
-
-
-    
-
-
-    
-
-
-  
 </div>
 
 
   <h2>Constructor Detail</h2>
   
-    <div class="entry-detail" id="new(ident,port)-class-method">
+    <div class="entry-detail" id="new(height:UInt64,timestamp:Int64,transactions:Array(String),previous_hash:BlockHash)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(ident, port)
+        def self.<strong>new</strong>(height : UInt64, timestamp : Int64, transactions : Array(String), previous_hash : <a href="../../Ledger/PoW/BlockHash.html">BlockHash</a>)
 
-        <a class="method-permalink" href="#new%28ident%2Cport%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28height%3AUInt64%2Ctimestamp%3AInt64%2Ctransactions%3AArray%28String%29%2Cprevious_hash%3ABlockHash%29-class-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L12" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="new(pull:JSON::PullParser)-class-method">
-      <div class="signature">
-        
-        def self.<strong>new</strong>(pull : JSON::PullParser)
-
-        <a class="method-permalink" href="#new%28pull%3AJSON%3A%3APullParser%29-class-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L7" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/block.cr#L18" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -448,66 +425,106 @@
 
   <h2>Instance Method Detail</h2>
   
-    <div class="entry-detail" id="ident:UUID-instance-method">
+    <div class="entry-detail" id="clone-instance-method">
       <div class="signature">
         
-        def <strong>ident</strong> : UUID
+        def <strong>clone</strong>
 
-        <a class="method-permalink" href="#ident%3AUUID-instance-method">#</a>
+        <a class="method-permalink" href="#clone-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L11" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/block.cr#L18" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="ident=(ident:UUID)-instance-method">
+    <div class="entry-detail" id="copy_with(height_height=@height,timestamp_timestamp=@timestamp,transactions_transactions=@transactions,previous_hash_previous_hash=@previous_hash)-instance-method">
       <div class="signature">
         
-        def <strong>ident=</strong>(ident : UUID)
+        def <strong>copy_with</strong>(height _height = @height, timestamp _timestamp = @timestamp, transactions _transactions = @transactions, previous_hash _previous_hash = @previous_hash)
 
-        <a class="method-permalink" href="#ident%3D%28ident%3AUUID%29-instance-method">#</a>
+        <a class="method-permalink" href="#copy_with%28height_height%3D%40height%2Ctimestamp_timestamp%3D%40timestamp%2Ctransactions_transactions%3D%40transactions%2Cprevious_hash_previous_hash%3D%40previous_hash%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L15" target="_blank">View source</a>]
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/block.cr#L18" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="port:Int32-instance-method">
+    <div class="entry-detail" id="height:UInt64-instance-method">
       <div class="signature">
         
-        def <strong>port</strong> : Int32
+        def <strong>height</strong> : UInt64
 
-        <a class="method-permalink" href="#port%3AInt32-instance-method">#</a>
+        <a class="method-permalink" href="#height%3AUInt64-instance-method">#</a>
       </div>
       
       <br/>
       <div>
-        
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L12" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="port=(port:Int32)-instance-method">
+    <div class="entry-detail" id="previous_hash:BlockHash-instance-method">
       <div class="signature">
         
-        def <strong>port=</strong>(port : Int32)
+        def <strong>previous_hash</strong> : <a href="../../Ledger/PoW/BlockHash.html">BlockHash</a>
 
-        <a class="method-permalink" href="#port%3D%28port%3AInt32%29-instance-method">#</a>
+        <a class="method-permalink" href="#previous_hash%3ABlockHash-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/messenger/struct/handshake.cr#L16" target="_blank">View source</a>]
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="timestamp:Int64-instance-method">
+      <div class="signature">
+        
+        def <strong>timestamp</strong> : Int64
+
+        <a class="method-permalink" href="#timestamp%3AInt64-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="to_hash_input:String-instance-method">
+      <div class="signature">
+        
+        def <strong>to_hash_input</strong> : String
+
+        <a class="method-permalink" href="#to_hash_input%3AString-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/cocol-project/cocol/blob/266cb8405234494b760780633c6b6710a3842ffc/src/cocol/node/ledger/model/block.cr#L24" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="transactions:Array(String)-instance-method">
+      <div class="signature">
+        
+        def <strong>transactions</strong> : Array(String)
+
+        <a class="method-permalink" href="#transactions%3AArray%28String%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
         
       </div>
     </div>

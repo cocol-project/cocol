@@ -1,7 +1,7 @@
 require "json"
 require "openssl"
 
-module Node::Ledger::Model
+module Ledger::Model
   class Transaction
     include JSON::Serializable
 

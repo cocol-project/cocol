@@ -38,7 +38,7 @@ module Event
       miner: Node.settings.miner
     }
 
-    if active_block = Node::Ledger::Repo.active_block
+    if active_block = Ledger::Repo.active_block
       update = update.merge({
         height: active_block.height,
         hash: active_block.hash
@@ -51,7 +51,7 @@ module Event
   end
 
   def transaction(event : EventType,
-                  transaction : Node::Ledger::Model::Transaction) : TransactionEvent
+                  transaction : Ledger::Model::Transaction) : TransactionEvent
     {
       event: event,
       hash: transaction.hash,
@@ -67,7 +67,7 @@ module Event
     }
   end
 
-  def block(block : Node::Ledger::Model::Block) : NewBlockEvent
+  def block(block : Ledger::Model::Block) : NewBlockEvent
     {
       event: "onNewBlock",
       hash: block.hash,

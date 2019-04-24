@@ -1,9 +1,9 @@
 require "spec"
 require "../src/cocol/node/ledger/model/block.cr"
 
-describe "Node::Ledger::Model::Block" do
+describe "Ledger::Model::Block" do
   context "Creating genesis block" do
-    genesis = Node::Ledger::Model::Block.genesis
+    genesis = Ledger::Model::Block.genesis
 
     it "uses correct timestamp" do
       genesis.timestamp.should eq(1449970561_i64)
@@ -27,9 +27,9 @@ describe "Node::Ledger::Model::Block" do
   end
 
   context "Generic block" do
-    block = Node::Ledger::Model::Block.new(
+    block = Ledger::Model::Block.new(
       height: 0,
-      transactions: Array(Node::Ledger::Model::Transaction).new,
+      transactions: Array(Ledger::Model::Transaction).new,
       previous_hash: "abcdefhash",
       difficulty_bits: 0
     )
