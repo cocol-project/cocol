@@ -2,13 +2,13 @@ name: cocol
 version: 0.1.0-alpha
 
 authors:
-  - Cristian Serb <mail@cristianserb.com>
+  - Cristian Șerb <cserb@pm.me>
 
 targets:
   cocol:
     main: src/cocol.cr
 
-crystal: 0.27.2
+crystal: 0.28.2
 
 dependencies:
   optarg:
