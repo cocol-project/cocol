@@ -4,11 +4,11 @@ require "../src/cocol/node/ledger/model/transaction.cr"
 describe "Ledger::Model::Transaction" do
   context "JSON Serializable" do
     txn_json = {
-      from: "Olivia",
-      to: "Teddyshum",
-      amount: 100,
+      from:      "Olivia",
+      to:        "Teddyshum",
+      amount:    100,
       timestamp: 1449970561,
-      hash: "c9b0f2181f2783594c8c30f79ef8ff6231494ab50013ed0bb0fc2cd75408f791"
+      hash:      "c9b0f2181f2783594c8c30f79ef8ff6231494ab50013ed0bb0fc2cd75408f791",
     }.to_json
 
     it "should initialize successfully" do

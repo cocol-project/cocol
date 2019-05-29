@@ -1,9 +1,9 @@
 require "http/client"
 
-require  "./messenger/struct/handshake"
-require  "./messenger/struct/peer"
+require "./messenger/struct/handshake"
+require "./messenger/struct/peer"
 
-require  "./messenger/repo"
+require "./messenger/repo"
 
 require "./ledger"
 require "./ledger/model/transaction"
@@ -70,7 +70,7 @@ module Messenger
           endpoint,
           headers: HTTP::Headers{
             "Content-Type" => "application/json",
-            "X-Node-Id" => Node.settings.port.to_s
+            "X-Node-Id"    => Node.settings.port.to_s,
           },
           body: body
         )

@@ -9,5 +9,4 @@ module Node
       Messenger.establish_network_position
     end
   end
-
 end

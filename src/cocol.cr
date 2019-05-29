@@ -14,7 +14,6 @@ require "./cocol/node/event.cr"
 require "./cocol/node/messenger.cr"
 
 class Cocol::App
-
   def run_api(port : Int32)
     before_all do |env|
       env.response.content_type = "application/json"

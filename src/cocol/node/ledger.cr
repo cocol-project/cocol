@@ -71,7 +71,7 @@ module Ledger
 
   def first_candidate : String
     tc = Ledger::Repo.candidates.map { |c| [c, Ledger::Repo.blocks[c].timestamp] }
-    tcs = tc.sort { |a,b| a[1].as(Int64) <=> b[1].as(Int64) }
+    tcs = tc.sort { |a, b| a[1].as(Int64) <=> b[1].as(Int64) }
 
     return tcs.last[0].as(String)
   end
@@ -124,5 +124,4 @@ module Ledger
       update_ledger
     end
   end
-
 end

@@ -65,8 +65,8 @@ module Ledger
       return false if self.blocks[block.hash]?
       return false if self.height[block.height]?
       return false if self.candidates.any? do |c|
-        self.blocks[c].height == block.height
-      end
+                        self.blocks[c].height == block.height
+                      end
 
       # new block add to blocks
       self.blocks[block.hash] = block

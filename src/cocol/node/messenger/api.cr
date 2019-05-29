@@ -1,11 +1,11 @@
 get "/peers" do |_env|
   Messenger::Repo.peers.map { |peer|
     {
-      ip_addr: "localhost",
+      ip_addr:   "localhost",
       handshake: {
         ident: peer.handshake.ident,
-        port: peer.handshake.port
-      }
+        port:  peer.handshake.port,
+      },
     }
   }.to_json
 end
@@ -13,9 +13,9 @@ end
 post "/peers" do |env|
   peer = Messenger::Struct::Peer.new(
     Messenger::Struct::Handshake.new(
-    ident: UUID.new(env.params.json["ident"].as(String)),
-    port: env.params.json["port"].as(Int64).to_i32
-  )
+      ident: UUID.new(env.params.json["ident"].as(String)),
+      port: env.params.json["port"].as(Int64).to_i32
+    )
   )
 
   # TODO: more like if Messenger.accepts_connection?(from: peer)
@@ -31,11 +31,11 @@ end
 get "/known-peers" do |_env|
   Messenger::Repo.known_peers.map { |peer|
     {
-      ip_addr: "localhost",
+      ip_addr:   "localhost",
       handshake: {
         ident: peer.handshake.ident,
-        port: peer.handshake.port
-      }
+        port:  peer.handshake.port,
+      },
     }
   }.to_json
 end

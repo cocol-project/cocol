@@ -5,7 +5,7 @@ require "big"
 require "./transaction"
 
 module Ledger
-  ### PoW
+  # ## PoW
 
   module PoW
     extend self
@@ -13,14 +13,13 @@ module Ledger
     alias BlockHash = String
 
     record Work,
-          nonce : UInt64,
-          hash : BlockHash
+      nonce : UInt64,
+      hash : BlockHash
     record BlockData,
-          height : UInt64,
-          timestamp : Int64,
-          transactions : Array(String),
-          previous_hash : BlockHash do
-
+      height : UInt64,
+      timestamp : Int64,
+      transactions : Array(String),
+      previous_hash : BlockHash do
       def to_hash_input : String
         "#{height}#{timestamp}#{transactions}#{previous_hash}"
       end
@@ -62,18 +61,17 @@ module Ledger
       property transactions : Array(Transaction)
 
       def initialize(@hash,
-                    @timestamp,
-                    @height,
-                    @nonce,
-                    @previous_hash,
-                    @transactions)
+                     @timestamp,
+                     @height,
+                     @nonce,
+                     @previous_hash,
+                     @transactions)
       end
 
       def self.new(height : UInt64,
-                  transactions : Array(Transaction),
-                  previous_hash : String,
-                  difficulty_bits : Int32 = 20)
-
+                   transactions : Array(Transaction),
+                   previous_hash : String,
+                   difficulty_bits : Int32 = 20)
         sleep Random.rand(5.0..6.1)
         block_data = BlockData.new(
           timestamp: Time.utc_now.to_unix,
@@ -82,7 +80,7 @@ module Ledger
           transactions: transactions.map { |txn| txn.hash }
         )
         work = PoW.mine(difficulty_bits: difficulty_bits,
-                              block_data: block_data)
+          block_data: block_data)
 
         Block.new(
           hash: work.hash,

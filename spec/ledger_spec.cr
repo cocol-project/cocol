@@ -24,12 +24,11 @@ describe "Ledger" do
     transactions = Array(Ledger::Model::Transaction).new
     nonce = 12_u64
 
-
     block_a = Ledger::Model::Block.new(
       height: height,
       transactions: transactions,
       previous_hash: previous_hash,
-      timestamp: Time.utc_now.to_unix-10,
+      timestamp: Time.utc_now.to_unix - 10,
       nonce: nonce,
       hash: "hash_a"
     )
@@ -37,7 +36,7 @@ describe "Ledger" do
       height: height,
       transactions: transactions,
       previous_hash: previous_hash,
-      timestamp: Time.utc_now.to_unix-9,
+      timestamp: Time.utc_now.to_unix - 9,
       nonce: nonce,
       hash: "hash_aa"
     )
@@ -46,7 +45,7 @@ describe "Ledger" do
       height: block_a.height + 1,
       transactions: transactions,
       previous_hash: block_a.hash,
-      timestamp: Time.utc_now.to_unix-8,
+      timestamp: Time.utc_now.to_unix - 8,
       nonce: nonce,
       hash: "hash_b"
     )
@@ -55,7 +54,7 @@ describe "Ledger" do
       height: block_b.height + 1,
       transactions: transactions,
       previous_hash: block_b.hash,
-      timestamp: Time.utc_now.to_unix-7,
+      timestamp: Time.utc_now.to_unix - 7,
       nonce: nonce,
       hash: "hash_c"
     )
@@ -64,7 +63,7 @@ describe "Ledger" do
       height: block_c.height + 1,
       transactions: transactions,
       previous_hash: block_c.hash,
-      timestamp: Time.utc_now.to_unix-6,
+      timestamp: Time.utc_now.to_unix - 6,
       nonce: nonce,
       hash: "hash_e"
     )

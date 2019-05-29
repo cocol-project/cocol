@@ -2,7 +2,6 @@ require "spec"
 require "../src/cocol/node/ledger/repo.cr"
 
 describe "Ledger::Repo" do
-
   context "Blocks" do
     block_a = Ledger::Model::Block.genesis
 

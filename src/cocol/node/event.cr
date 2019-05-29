@@ -34,14 +34,14 @@ module Event
     update = {
       event: event,
       peers: Messenger::Repo.peers.map { |peer| peer.handshake.port },
-      port: Node.settings.port,
-      miner: Node.settings.miner
+      port:  Node.settings.port,
+      miner: Node.settings.miner,
     }
 
     if active_block = Ledger::Repo.active_block
       update = update.merge({
         height: active_block.height,
-        hash: active_block.hash
+        hash:   active_block.hash,
       })
     else
       update = update.merge({height: 0, hash: "-"})
@@ -53,26 +53,26 @@ module Event
   def transaction(event : EventType,
                   transaction : Ledger::Model::Transaction) : TransactionEvent
     {
-      event: event,
-      hash: transaction.hash,
-      amount: transaction.amount
+      event:  event,
+      hash:   transaction.hash,
+      amount: transaction.amount,
     }
   end
 
   def peer(peer : Messenger::Struct::Peer) : PeerConnectionEvent
     {
-      event: "onConnection",
+      event:     "onConnection",
       node_port: Node.settings.port,
-      peer_port: peer.handshake.port
+      peer_port: peer.handshake.port,
     }
   end
 
   def block(block : Ledger::Model::Block) : NewBlockEvent
     {
-      event: "onNewBlock",
-      hash: block.hash,
+      event:         "onNewBlock",
+      hash:          block.hash,
       previous_hash: block.previous_hash,
-      height: block.height
+      height:        block.height,
     }
   end
 end
