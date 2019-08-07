@@ -57,6 +57,7 @@ class Cocol::App
 
     spawn Node.start
 
+    # see https://crystal-lang.org/api/0.30.0/toplevel.html#parallel(*jobs)-macro
     if args.miner?
       spawn block_mining_loop
     end

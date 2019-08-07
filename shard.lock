@@ -2,7 +2,7 @@ version: 1.0
 shards:
   btcpow:
     github: cocol-project/btcpow
-    commit: 5fe8ac7c927079c9a6015bd493a23744a4784121
+    commit: c02a69bb7387170881ce54dd7cefa7fef32a4c3c
 
   callback:
     github: mosop/callback
@@ -14,7 +14,7 @@ shards:
 
   icr:
     github: crystal-community/icr
-    commit: a0a5546e0e566891e5ce221313cb19995d0a643f
+    commit: 1719a1b32ca0be34e29efad84e8b5f6724aa1292
 
   kemal:
     github: kemalcr/kemal
@@ -26,7 +26,7 @@ shards:
 
   minitest:
     github: ysbaddaden/minitest.cr
-    version: 0.4.2
+    version: 0.4.3
 
   optarg:
     github: mosop/optarg

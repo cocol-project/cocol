@@ -8,15 +8,18 @@ targets:
   cocol:
     main: src/cocol.cr
 
-crystal: 0.30.0
+crystal: 0.29.0
 
 dependencies:
   optarg:
-    github: mosop/optarg
+   github: mosop/optarg
+   version: ~> 0.6.0
   kemal:
     github: kemalcr/kemal
+    version: ~> 0.25.2
   totem:
     github: icyleaf/totem
+    version: ~> 0.5.1
   btcpow:
     github: cocol-project/btcpow
     branch: retarget
@@ -24,6 +27,7 @@ dependencies:
 development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
+    version: ~> 0.4.3
   icr:
     github: crystal-community/icr
     branch: master
