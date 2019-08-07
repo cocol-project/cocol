@@ -8,7 +8,7 @@ targets:
   cocol:
     main: src/cocol.cr
 
-crystal: 0.28.2
+crystal: 0.30.0
 
 dependencies:
   optarg:
@@ -17,9 +17,15 @@ dependencies:
     github: kemalcr/kemal
   totem:
     github: icyleaf/totem
+  btcpow:
+    github: cocol-project/btcpow
+    branch: retarget
 
 development_dependencies:
   minitest:
     github: ysbaddaden/minitest.cr
+  icr:
+    github: crystal-community/icr
+    branch: master
 
 license: MPL-2.0

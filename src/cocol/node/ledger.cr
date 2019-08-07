@@ -10,6 +10,8 @@ require "./messenger.cr"
 
 require "./ledger/api.cr"
 
+require "btcpow"
+
 module Ledger
   extend self
 
@@ -28,29 +30,41 @@ module Ledger
     Ledger::Repo.ledger << genesis.hash
   end
 
-  def workflow_mine(transactions : Array(Ledger::Model::Transaction), difficulty_bits : Int32 = 1) : Void
+  def workflow_mine(transactions : Array(Ledger::Model::Transaction)) : Void
     active_block = Ledger::Repo.active_block
     raise "No active block" unless active_block
 
     if Ledger::Repo.candidates.size > 0
       previous_hash = first_candidate()
-      # previous_hash = Ledger::Repo.candidates.first
       height = Ledger::Repo.blocks[previous_hash].height + 1
     else
       previous_hash = active_block.hash
       height = active_block.height + 1
     end
 
+    if height % 12 == 0
+      first_block = Ledger::Repo.blocks[Ledger::Repo.height[height - 12]]
+      last_block = Ledger::Repo.blocks[Ledger::Repo.height[height - 1]]
+      difficulty = BTCPoW::Utils.retarget(
+        start_time: first_block.timestamp,
+        end_time: last_block.timestamp,
+        wanted_timespan: 1_u32,
+        current_target: BTCPoW::Utils.calculate_target(from: last_block.nbits)
+      )
+    else # min difficulty
+      difficulty = Ledger::Model::Block::MIN_NBITS
+    end
+
     new_block = Ledger::Model::Block.new(
       height: height,
       transactions: transactions,
       previous_hash: previous_hash,
-      difficulty_bits: difficulty_bits
+      difficulty: difficulty
     )
 
     if Ledger::Repo.save_block(new_block)
-      pp "[#{Time.now}] [Node: #{Node.settings.port}] Mined: #{new_block.hash}"
-      Ledger::Repo.delete_transactions(transactions)
+      Cocol.logger.info "[#{Time.now}] [Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Mined: #{new_block.hash}"
+      # Ledger::Repo.delete_transactions(transactions)
       workflow_assign_block(new_block)
 
       spawn { Messenger.broadcast to: "/blocks", body: new_block.to_json }

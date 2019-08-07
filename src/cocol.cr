@@ -5,6 +5,8 @@ require "totem"
 require "uuid"
 require "uuid/json"
 
+require "./cocol/logger.cr"
+
 require "./cocol/cli/argument"
 
 require "./cocol/node/settings"
@@ -27,7 +29,7 @@ class Cocol::App
     Kemal.run(port: port, args: nil)
   end
 
-  def self.block_creation_loop
+  def self.block_mining_loop
     threshold = 2
     loop do
       sleep 1
@@ -37,7 +39,10 @@ class Cocol::App
       ).size
 
       if pending_transactions_count >= threshold
-        Ledger.workflow_mine(pending_transactions)
+        Cocol.logger.info "[#{Time.now}] [Node: #{Node.settings.port}] Mining triggered"
+        mining_transactions = pending_transactions
+        Ledger::Repo.delete_transactions(mining_transactions)
+        Ledger.workflow_mine(mining_transactions)
       end
     end
   end
@@ -53,14 +58,19 @@ class Cocol::App
     spawn Node.start
 
     if args.miner?
-      spawn block_creation_loop
+      spawn block_mining_loop
     end
 
     if args.update?
       spawn Ledger.update_ledger
     end
 
-    cocol.run_api(port: args.port.to_i32)
+    spawn { cocol.run_api(port: args.port.to_i32) }
+
+    loop do
+      # nothing
+      sleep 0.01
+    end
   end
 end
 

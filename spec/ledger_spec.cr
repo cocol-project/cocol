@@ -23,6 +23,8 @@ describe "Ledger" do
     previous_hash = Ledger::Repo.ledger.last
     transactions = Array(Ledger::Model::Transaction).new
     nonce = 12_u64
+    nbits = "20100000"
+    randr = rand(0_u16..UInt16::MAX)
 
     block_a = Ledger::Model::Block.new(
       height: height,
@@ -30,6 +32,8 @@ describe "Ledger" do
       previous_hash: previous_hash,
       timestamp: Time.utc_now.to_unix - 10,
       nonce: nonce,
+      nbits: nbits,
+      randr: randr,
       hash: "hash_a"
     )
     block_aa = Ledger::Model::Block.new(
@@ -38,6 +42,8 @@ describe "Ledger" do
       previous_hash: previous_hash,
       timestamp: Time.utc_now.to_unix - 9,
       nonce: nonce,
+      nbits: nbits,
+      randr: randr,
       hash: "hash_aa"
     )
 
@@ -47,6 +53,8 @@ describe "Ledger" do
       previous_hash: block_a.hash,
       timestamp: Time.utc_now.to_unix - 8,
       nonce: nonce,
+      nbits: nbits,
+      randr: randr,
       hash: "hash_b"
     )
 
@@ -56,6 +64,8 @@ describe "Ledger" do
       previous_hash: block_b.hash,
       timestamp: Time.utc_now.to_unix - 7,
       nonce: nonce,
+      nbits: nbits,
+      randr: randr,
       hash: "hash_c"
     )
 
@@ -65,6 +75,8 @@ describe "Ledger" do
       previous_hash: block_c.hash,
       timestamp: Time.utc_now.to_unix - 6,
       nonce: nonce,
+      nbits: nbits,
+      randr: randr,
       hash: "hash_e"
     )
 
@@ -110,14 +122,27 @@ describe "Ledger" do
       Ledger::Repo.candidates.includes?(block_e.hash).should be_truthy
       Ledger::Repo.orphans[block_e.previous_hash]?.should be_falsey
     end
-  end
+  # end
 
-  describe "Workflow Mining" do
+  # describe "Workflow Mining" do
     new_block_parent = Ledger::Repo.candidates.first
-    Ledger.workflow_mine(
-      transactions: Ledger::Repo.pending_transactions.values,
-      difficulty_bits: 1
+    spawn { Ledger.workflow_mine(transactions: Ledger::Repo.pending_transactions.values) }
+    # sleep 0.2
+    block_fee = Ledger::Model::Block.new(
+      height: block_c.height + 2,
+      transactions: transactions,
+      previous_hash: block_c.hash,
+      timestamp: Time.utc_now.to_unix - 6,
+      nonce: nonce,
+      nbits: nbits,
+      randr: randr,
+      hash: "hash_fee"
     )
+    pp block_c.height + 2
+    if Ledger::Repo.save_block(block_fee)
+      puts "block_fee saved!!!!"
+      Ledger.workflow_assign_block(block_fee)
+    end
 
     it "it became first candidate" do
       new_block_parent.should eq(Ledger::Repo.ledger.last)
@@ -125,20 +150,11 @@ describe "Ledger" do
       new_block.previous_hash.should eq(new_block_parent)
       Ledger::Repo.blocks[Ledger::Repo.candidates.first].height.should eq(Ledger::Repo.blocks[new_block_parent].height + 1)
     end
-
-    txn = Ledger::Model::Transaction.new(
-      from: "Olivia",
-      to: "Teddyshum",
-      amount: 100_f32,
-    )
-    Ledger::Repo.pending_transactions[txn.hash] = txn
-
-    Ledger.workflow_mine(
-      transactions: Ledger::Repo.pending_transactions.values,
-      difficulty_bits: 1
-    )
-    it "deleted used transactions" do
-      Ledger::Repo.pending_transactions.empty?.should be_true
-    end
+    puts "----"
+    p Ledger::Repo.blocks
+    p Ledger::Repo.ledger
+    p Ledger::Repo.height
+    p Ledger::Repo.candidates
+    puts "---"
   end
 end

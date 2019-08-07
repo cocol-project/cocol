@@ -1,5 +1,9 @@
 version: 1.0
 shards:
+  btcpow:
+    github: cocol-project/btcpow
+    commit: 5fe8ac7c927079c9a6015bd493a23744a4784121
+
   callback:
     github: mosop/callback
     version: 0.6.3
@@ -7,6 +11,10 @@ shards:
   exception_page:
     github: crystal-loot/exception_page
     version: 0.1.2
+
+  icr:
+    github: crystal-community/icr
+    commit: a0a5546e0e566891e5ce221313cb19995d0a643f
 
   kemal:
     github: kemalcr/kemal

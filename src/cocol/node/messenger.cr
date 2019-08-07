@@ -75,7 +75,7 @@ module Messenger
           body: body
         )
       rescue
-        pp "Peer #{peer.handshake.port} is not responding"
+        Cocol.logger.warn "Peer #{peer.handshake.port} is not responding"
       end
       client.close
     end
