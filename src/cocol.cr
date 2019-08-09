@@ -30,19 +30,22 @@ class Cocol::App
   end
 
   def self.block_mining_loop
-    threshold = 2
-    loop do
-      sleep 1
+    args = CLI::Argument.parse(ARGV)
+    if args.miner?
+      threshold = 2
+      loop do
+        sleep 1
 
-      pending_transactions_count = (
-        pending_transactions = Ledger::Repo.pending_transactions.values
-      ).size
+        pending_transactions_count = (
+          pending_transactions = Ledger::Repo.pending_transactions.values
+        ).size
 
-      if pending_transactions_count >= threshold
-        Cocol.logger.info "[Node: #{Node.settings.port}] Mining triggered"
-        mining_transactions = pending_transactions
-        Ledger::Repo.delete_transactions(mining_transactions)
-        Ledger.workflow_mine(mining_transactions)
+        if pending_transactions_count >= threshold
+          Cocol.logger.info "[Node: #{Node.settings.port}] Mining triggered"
+          mining_transactions = pending_transactions
+          Ledger::Repo.delete_transactions(mining_transactions)
+          Ledger.workflow_mine(mining_transactions)
+        end
       end
     end
   end
@@ -55,18 +58,16 @@ class Cocol::App
     Node.settings.miner = args.miner?
     Node.settings.master = args.master?
 
-    spawn Node.start
-
-    # see https://crystal-lang.org/api/0.30.0/toplevel.html#parallel(*jobs)-macro
-    if args.miner?
-      spawn block_mining_loop
-    end
+    spawn Node.start()
 
     if args.update?
-      spawn Ledger.update_ledger
+      spawn Ledger.update_ledger()
     end
 
-    spawn { cocol.run_api(port: args.port.to_i32) }
+    parallel(
+      block_mining_loop(),
+      cocol.run_api(port: args.port.to_i32)
+    )
 
     loop do
       # nothing

@@ -15,7 +15,7 @@ do
     sleep 0.2
 done
 
-for ((i=1;i<=1;i++));
+for ((i=1;i<=5;i++));
 do
     # ../cocol -p $(($startPort + $i)) -a $(($startApiPort + $i)) > /dev/null 2>&1 &
     ./cocol -p $((4000 + $i)) --max-connections 5 --miner 1>> /tmp/cocol.log &
