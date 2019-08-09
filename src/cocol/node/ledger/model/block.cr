@@ -7,37 +7,6 @@ require "./transaction"
 require "btcpow"
 
 module Ledger
-  # ## PoW
-
-  # module PoW
-  #   extend self
-
-  #   record Work,
-  #     nonce : UInt64,
-  #     hash : BlockHash
-
-  #   def self.mine(difficulty_bits : Int32, block_data : BlockData) : Work
-  #     max_nonce = BigInt.new(2) ** BigInt.new(32)
-  #     target = BigInt.new(2) ** BigInt.new(256 - difficulty_bits)
-  #     data = block_data.to_hash_input
-
-  #     (0..max_nonce).each do |i|
-  #       hash = calculate_hash(i.to_i64, data)
-  #       if BigInt.new(hash, 16) < target
-  #         return Work.new(nonce: i.to_u64, hash: hash)
-  #       end
-  #     end
-
-  #     raise "max_nonce reached"
-  #   end
-
-  #   def self.calculate_hash(nonce : Int64, data : String) : BlockHash
-  #     sha = OpenSSL::Digest.new("SHA256")
-  #     sha.update("#{nonce}#{data}")
-  #     sha.hexdigest
-  #   end
-  # end
-
   module Model
     class Block
       MIN_NBITS = "20000010"
@@ -80,7 +49,7 @@ module Ledger
       def self.new(height : UInt64,
                    transactions : Array(Transaction),
                    previous_hash : String,
-                   difficulty : String = MIN_NBITS)
+                   difficulty : String)
         #sleep Random.rand(5.0..6.1)
         block_data = BlockData.new(
           timestamp: Time.utc_now.to_unix,
@@ -89,6 +58,7 @@ module Ledger
           randr: Random.rand(0_u16..UInt16::MAX),
           transactions: transactions.map { |txn| txn.hash }
         )
+        Cocol.logger.info("Miner: #{Node.settings.port} Difficulty: #{difficulty}")
         work = BTCPoW.mine(difficulty: difficulty,
           for: block_data.to_input)
 

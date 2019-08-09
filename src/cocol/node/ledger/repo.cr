@@ -70,13 +70,13 @@ module Ledger
 
       # new block add to blocks
       self.blocks[block.hash] = block
+      self.height[block.height] = block.hash
       true
     end
 
     def establish(block_hash : BlockHash, height : Height) : Void
       self.ledger << block_hash
       self.established_height(plus: 1_u64)
-      self.height[height] = block_hash
     end
 
     def save_transaction(transaction : Model::Transaction) : Bool

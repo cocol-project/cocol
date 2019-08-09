@@ -2,7 +2,7 @@ version: 1.0
 shards:
   btcpow:
     github: cocol-project/btcpow
-    commit: c02a69bb7387170881ce54dd7cefa7fef32a4c3c
+    commit: c72181405213de8f00aaf98a896a80fca2bc9a6c
 
   callback:
     github: mosop/callback

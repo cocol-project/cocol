@@ -27,6 +27,7 @@ module Ledger
     genesis = Ledger::Model::Block.genesis
 
     Ledger::Repo.blocks[genesis.hash] = genesis
+    Ledger::Repo.height[0] = genesis.hash
     Ledger::Repo.ledger << genesis.hash
   end
 
@@ -42,17 +43,19 @@ module Ledger
       height = active_block.height + 1
     end
 
-    if height % 12 == 0
-      first_block = Ledger::Repo.blocks[Ledger::Repo.height[height - 12]]
+    if height % 20 == 0
+      Cocol.logger.info "Retargeting Now"
+
+      first_block = Ledger::Repo.blocks[Ledger::Repo.height[height - 20]]
       last_block = Ledger::Repo.blocks[Ledger::Repo.height[height - 1]]
       difficulty = BTCPoW::Utils.retarget(
-        start_time: first_block.timestamp,
-        end_time: last_block.timestamp,
-        wanted_timespan: 1_u32,
+        start_time: first_block.timestamp.to_f64,
+        end_time: last_block.timestamp.to_f64,
+        wanted_timespan: 60_f64,
         current_target: BTCPoW::Utils.calculate_target(from: last_block.nbits)
       )
-    else # min difficulty
-      difficulty = Ledger::Model::Block::MIN_NBITS
+    else # last blocks difficulty
+      difficulty = Ledger::Repo.blocks[previous_hash].nbits
     end
 
     new_block = Ledger::Model::Block.new(
@@ -63,7 +66,7 @@ module Ledger
     )
 
     if Ledger::Repo.save_block(new_block)
-      Cocol.logger.info "[#{Time.now}] [Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Mined: #{new_block.hash}"
+      Cocol.logger.info "[Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Mined: #{new_block.hash}"
       # Ledger::Repo.delete_transactions(transactions)
       workflow_assign_block(new_block)
 

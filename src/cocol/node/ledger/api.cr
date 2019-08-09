@@ -21,7 +21,7 @@ post "/blocks" do |env|
     env.request.body.not_nil!)
   if Ledger::Repo.save_block(new_block)
     if Node.settings.port > 4000
-      Cocol.logger.info "[#{Time.now}] [Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
+      Cocol.logger.info "[Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
     end
     spawn do
       Ledger.workflow_assign_block(new_block)

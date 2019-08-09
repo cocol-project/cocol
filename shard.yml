@@ -1,5 +1,5 @@
 name: cocol
-version: 0.1.0-alpha
+version: 0.1.2-alpha
 
 authors:
   - Cristian Șerb <cserb@pm.me>
@@ -22,7 +22,6 @@ dependencies:
     version: ~> 0.5.1
   btcpow:
     github: cocol-project/btcpow
-    branch: retarget
 
 development_dependencies:
   minitest:
