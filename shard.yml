@@ -12,8 +12,8 @@ crystal: 0.29.0
 
 dependencies:
   optarg:
-   github: mosop/optarg
-   version: ~> 0.6.0
+   github: drujensen/optarg
+   version: ~> 0.7.0
   kemal:
     github: kemalcr/kemal
     version: ~> 0.25.2

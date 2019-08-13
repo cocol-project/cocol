@@ -52,7 +52,7 @@ module Ledger
                    difficulty : String)
         #sleep Random.rand(5.0..6.1)
         block_data = BlockData.new(
-          timestamp: Time.utc_now.to_unix,
+          timestamp: Time.utc.to_unix,
           height: height,
           previous_hash: previous_hash,
           randr: Random.rand(0_u16..UInt16::MAX),
