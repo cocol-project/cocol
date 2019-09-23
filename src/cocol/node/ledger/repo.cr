@@ -31,14 +31,6 @@ module Ledger
       @@orphans ||= Hash(ParentHash, BlockHash).new
     end
 
-    def pending_transactions : Hash(TxnHash, Model::Transaction)
-      @@pending_transactions ||= Hash(TxnHash, Model::Transaction).new
-    end
-
-    def transactions : Hash(TxnHash, Model::Transaction)
-      @@transactions ||= Hash(TxnHash, Model::Transaction).new
-    end
-
     # ===
 
     def active_block : (Nil | Model::Block)
@@ -77,20 +69,6 @@ module Ledger
     def establish(block_hash : BlockHash, height : Height) : Void
       self.ledger << block_hash
       self.established_height(plus: 1_u64)
-    end
-
-    def save_transaction(transaction : Model::Transaction) : Bool
-      return false if self.transactions[transaction.hash]?
-
-      self.pending_transactions[transaction.hash] = transaction
-      self.transactions[transaction.hash] = transaction
-      true
-    end
-
-    def delete_transactions(mined_transactions : Array(Ledger::Model::Transaction)) : Void
-      mined_transactions.each do |txn|
-        pending_transactions.delete(txn.hash)
-      end
     end
   end
 end

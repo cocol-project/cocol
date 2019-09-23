@@ -36,6 +36,10 @@ shards:
     github: icyleaf/popcorn
     version: 0.2.1
 
+  probfin:
+    github: cocol-project/probfin
+    commit: ce09ccb8ce25550d61c311c7e7dcdde05a0157dd
+
   radix:
     github: luislavena/radix
     version: 0.3.9
