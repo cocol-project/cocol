@@ -22,6 +22,8 @@ dependencies:
     version: ~> 0.5.1
   btcpow:
     github: cocol-project/btcpow
+  probfin:
+    github: cocol-project/probfin
 
 development_dependencies:
   minitest:

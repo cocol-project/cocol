@@ -1,7 +1,7 @@
 post "/transactions" do |env|
   new_txn = Ledger::Model::Transaction.from_json(
     env.request.body.not_nil!)
-  if Ledger::Repo.save_transaction(new_txn)
+  if Ledger::Mempool.add(new_txn)
     spawn { Messenger.broadcast to: "/transactions", body: new_txn.to_json }
 
     if Node.settings.miner
@@ -13,7 +13,7 @@ post "/transactions" do |env|
 end
 
 get "/transactions" do |_env|
-  Ledger::Repo.pending_transactions.to_json
+  Ledger::Mempool.pending.to_json
 end
 
 post "/blocks" do |env|

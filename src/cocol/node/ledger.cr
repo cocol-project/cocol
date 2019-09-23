@@ -2,6 +2,7 @@ require "./ledger/model/block"
 require "./ledger/model/transaction"
 
 require "./ledger/repo"
+require "./ledger/mempool"
 
 require "./event.cr"
 

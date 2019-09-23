@@ -2,13 +2,15 @@ require "json"
 require "openssl"
 
 module Ledger::Model
-  class Transaction
+  struct Transaction
     include JSON::Serializable
+
+    alias TxnHash = String
 
     property from : String
     property to : String
     property amount : Float32
-    getter hash : String
+    getter hash : TxnHash
     getter timestamp : Int64
 
     def initialize(@from, @to, @amount)
@@ -16,9 +18,9 @@ module Ledger::Model
       @hash = calc_hash
     end
 
-    private def calc_hash : String
+    private def calc_hash : TxnHash
       sha = OpenSSL::Digest.new("SHA256")
-      sha.update("#{@from}#{@to}#{@amount}")
+      sha.update("#{@from}#{@to}#{@amount}#{@timestamp}")
       sha.hexdigest
     end
   end

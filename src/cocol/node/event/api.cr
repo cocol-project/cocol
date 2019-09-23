@@ -1,3 +1,5 @@
+require "kemal"
+
 ws "/events" do |socket|
   Event.add_socket socket
   spawn Event.broadcast(Event.update("onInitialUpdate").to_json)

@@ -34,22 +34,22 @@ describe "Ledger::Repo" do
     )
 
     it "saves to pending transactions" do
-      saved = Ledger::Repo.save_transaction(txn)
+      saved = Ledger::Mempool.add(txn)
 
       saved.should be_true
-      Ledger::Repo.pending_transactions.empty?.should be_false
+      Ledger::Mempool.pending.empty?.should be_false
     end
 
     it "rejects if it's a known transaction" do
-      saved = Ledger::Repo.save_transaction(txn)
+      saved = Ledger::Mempool.add(txn)
 
       saved.should be_false
     end
 
     it "deletes transactions" do
-      Ledger::Repo.delete_transactions([txn])
+      Ledger::Mempool.remove([txn])
 
-      Ledger::Repo.pending_transactions.empty?.should be_true
+      Ledger::Mempool.pending.empty?.should be_true
     end
   end
 end

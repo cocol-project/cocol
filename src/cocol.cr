@@ -37,13 +37,13 @@ class Cocol::App
         sleep 1
 
         pending_transactions_count = (
-          pending_transactions = Ledger::Repo.pending_transactions.values
+          pending_transactions = Ledger::Mempool.pending.values
         ).size
 
         if pending_transactions_count >= threshold
           Cocol.logger.info "[Node: #{Node.settings.port}] Mining triggered"
           mining_transactions = pending_transactions
-          Ledger::Repo.delete_transactions(mining_transactions)
+          Ledger::Mempool.remove(mining_transactions)
           Ledger.workflow_mine(mining_transactions)
         end
       end

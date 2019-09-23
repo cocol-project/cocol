@@ -126,7 +126,7 @@ describe "Ledger" do
 
   # describe "Workflow Mining" do
     new_block_parent = Ledger::Repo.candidates.first
-    spawn { Ledger.workflow_mine(transactions: Ledger::Repo.pending_transactions.values) }
+    spawn { Ledger.workflow_mine(transactions: Ledger::Mempool.pending.values) }
     # sleep 0.2
     block_fee = Ledger::Model::Block.new(
       height: block_c.height + 2,
