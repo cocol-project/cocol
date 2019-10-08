@@ -38,14 +38,11 @@ module Event
       miner: Node.settings.miner,
     }
 
-    if active_block = Ledger::Repo.active_block
-      update = update.merge({
-        height: active_block.height,
-        hash:   active_block.hash,
-      })
-    else
-      update = update.merge({height: 0, hash: "-"})
-    end
+    latest_block = Ledger::Repo.blocks[Ledger::Repo.latest_block_hash]
+    update = update.merge({
+      height: latest_block.height,
+      hash:   latest_block.hash,
+    })
 
     update
   end

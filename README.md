@@ -25,7 +25,7 @@ After setting up Crystal you can clone the Cocol repository and install the depe
 ## Usage ⚔
 Make your changes to the code-base and than build Cocol
 ```shell
-> shards build
+> crystal build -Dpreview_mt src/cocol.cr
 ```
 The binary `./bin/cocol` offers the following CLI options
 

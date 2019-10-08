@@ -26,7 +26,7 @@ post "/blocks" do |env|
     spawn do
       Ledger.workflow_assign_block(new_block)
       Messenger.broadcast to: "/blocks", body: new_block.to_json
-      spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
+      Event.broadcast(Event.update("onInitialUpdate").to_json)
     end
   end
 end
@@ -37,10 +37,4 @@ end
 
 get "/ledger" do |_env|
   Ledger::Repo.ledger.to_json
-end
-get "/candidates" do |_env|
-  Ledger::Repo.candidates.to_json
-end
-get "/orphans" do |_env|
-  Ledger::Repo.orphans.to_json
 end

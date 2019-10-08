@@ -23,14 +23,6 @@ module Ledger
       @@height ||= Hash(Height, BlockHash).new
     end
 
-    def candidates : Array(BlockHash)
-      @@candidates ||= Array(BlockHash).new
-    end
-
-    def orphans : Hash(ParentHash, BlockHash)
-      @@orphans ||= Hash(ParentHash, BlockHash).new
-    end
-
     # ===
 
     def active_block : (Nil | Model::Block)
@@ -56,9 +48,6 @@ module Ledger
     def save_block(block : Model::Block) : Bool
       return false if self.blocks[block.hash]?
       return false if self.height[block.height]?
-      return false if self.candidates.any? do |c|
-                        self.blocks[c].height == block.height
-                      end
 
       # new block add to blocks
       self.blocks[block.hash] = block
@@ -69,6 +58,18 @@ module Ledger
     def establish(block_hash : BlockHash, height : Height) : Void
       self.ledger << block_hash
       self.established_height(plus: 1_u64)
+    end
+
+    def push(block : Ledger::Model::Block)
+      ProbFin.push(block: block.hash, parent: block.previous_hash)
+    end
+
+    def latest_block_hash : BlockHash
+      current = ProbFin::Chain.dag[active_block.hash]
+      DAG::Graph.tip_of_longest_branch(
+        from: current,
+        in: DAG::Graph.topsort(from: current)
+      )[0].as(DAG::Vertex).name
     end
   end
 end
