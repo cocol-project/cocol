@@ -64,10 +64,8 @@ class Cocol::App
       spawn Ledger.update_ledger()
     end
 
-    parallel(
-      block_mining_loop(),
-      cocol.run_api(port: args.port.to_i32)
-    )
+    spawn block_mining_loop
+    spawn { cocol.run_api(port: args.port.to_i32) }
 
     loop do
       # nothing

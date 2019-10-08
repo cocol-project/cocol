@@ -20,8 +20,6 @@ module Ledger
 
   def workflow_genesis_block : Void
     Ledger::Repo.ledger.clear
-    Ledger::Repo.orphans.clear
-    Ledger::Repo.candidates.clear
     Ledger::Repo.blocks.clear
     Ledger::Repo.established_height = 0
 
@@ -30,19 +28,15 @@ module Ledger
     Ledger::Repo.blocks[genesis.hash] = genesis
     Ledger::Repo.height[0] = genesis.hash
     Ledger::Repo.ledger << genesis.hash
+    Ledger::Repo.push(block: genesis)
   end
 
   def workflow_mine(transactions : Array(Ledger::Model::Transaction)) : Void
     active_block = Ledger::Repo.active_block
     raise "No active block" unless active_block
 
-    if Ledger::Repo.candidates.size > 0
-      previous_hash = first_candidate()
-      height = Ledger::Repo.blocks[previous_hash].height + 1
-    else
-      previous_hash = active_block.hash
-      height = active_block.height + 1
-    end
+    previous_hash = Ledger::Repo.latest_block_hash
+    height = Ledger::Repo.blocks[previous_hash].height + 1
 
     if height % 20 == 0
       Cocol.logger.info "Retargeting Now"
@@ -68,7 +62,7 @@ module Ledger
 
     if Ledger::Repo.save_block(new_block)
       Cocol.logger.info "[Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Mined: #{new_block.hash}"
-      # Ledger::Repo.delete_transactions(transactions)
+      Ledger::Mempool.remove(transactions)
       workflow_assign_block(new_block)
 
       spawn { Messenger.broadcast to: "/blocks", body: new_block.to_json }
@@ -95,32 +89,7 @@ module Ledger
   end
 
   def workflow_assign_block(block : Ledger::Model::Block) : Void
-    if Ledger::Repo.ledger.last == block.previous_hash
-      Ledger::Repo.candidates << block.hash
-    elsif block.previous_hash == first_candidate()
-      # establish parent
-      Ledger::Repo.establish(block.previous_hash, Ledger::Repo.blocks[block.previous_hash].height)
-      # clear candidates
-      Ledger::Repo.candidates.clear
-      # check for orphan
-      if orphan = Ledger::Repo.orphans[block.hash]?
-        # establish current
-        Ledger::Repo.establish(block.hash, block.height)
-
-        # vote orphan for candidate
-        Ledger::Repo.candidates << orphan
-        # remove from orphans
-        Ledger::Repo.orphans.delete(block.hash)
-      else
-        # vote current for candidate
-        Ledger::Repo.candidates << block.hash
-      end
-    elsif !Ledger::Repo.ledger.includes?(block.previous_hash)
-      if !Ledger::Repo.blocks[block.previous_hash]?
-        # it's an orphan
-        Ledger::Repo.orphans[block.previous_hash] = block.hash
-      end
-    end
+    Ledger::Repo.push(block: block)
   end
 
   def update_ledger : Void

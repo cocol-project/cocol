@@ -1,8 +1,8 @@
 version: 1.0
 shards:
   btcpow:
-    github: cocol-project/btcpow
-    commit: c72181405213de8f00aaf98a896a80fca2bc9a6c
+    path: /home/cris/Projects/crystal/btcpow
+    commit: 
 
   callback:
     github: drujensen/callback
@@ -18,7 +18,7 @@ shards:
 
   kemal:
     github: kemalcr/kemal
-    version: 0.25.2
+    version: 0.26.0
 
   kilt:
     github: jeromegn/kilt
@@ -34,11 +34,11 @@ shards:
 
   popcorn:
     github: icyleaf/popcorn
-    version: 0.2.1
+    version: 0.2.2
 
   probfin:
-    github: cocol-project/probfin
-    commit: ce09ccb8ce25550d61c311c7e7dcdde05a0157dd
+    path: /home/cris/Projects/crystal/probfin
+    commit: 
 
   radix:
     github: luislavena/radix
