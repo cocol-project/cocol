@@ -1,8 +1,8 @@
 version: 1.0
 shards:
   btcpow:
-    path: /home/cris/Projects/crystal/btcpow
-    commit: 
+    github: cocol-project/btcpow
+    commit: 5788113e29229044a06ed323e2fa921f803af40d
 
   callback:
     github: drujensen/callback
@@ -37,8 +37,8 @@ shards:
     version: 0.2.2
 
   probfin:
-    path: /home/cris/Projects/crystal/probfin
-    commit: 
+    github: cocol-project/probfin
+    commit: 1fb81042d28462368d4ff29112952ba9a7fb070c
 
   radix:
     github: luislavena/radix
