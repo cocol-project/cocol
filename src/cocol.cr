@@ -1,19 +1,4 @@
-require "json"
-require "kemal"
-require "socket"
-require "totem"
-require "uuid"
-require "uuid/json"
-
-require "./cocol/logger.cr"
-
-require "./cocol/cli/argument"
-
-require "./cocol/node/settings"
-require "./cocol/node.cr"
-require "./cocol/node/ledger.cr"
-require "./cocol/node/event.cr"
-require "./cocol/node/messenger.cr"
+require "./deps"
 
 class Cocol::App
   def run_api(port : Int32)
@@ -29,6 +14,7 @@ class Cocol::App
     Kemal.run(port: port, args: nil)
   end
 
+  # if mining
   def self.block_mining_loop
     args = CLI::Argument.parse(ARGV)
     if args.miner?
@@ -44,11 +30,38 @@ class Cocol::App
           Cocol.logger.info "[Node: #{Node.settings.port}] Mining triggered"
           mining_transactions = pending_transactions
           Ledger::Mempool.remove(mining_transactions)
-          Ledger.workflow_mine(mining_transactions)
+          Ledger::Pow.mine(mining_transactions)
         end
       end
     end
   end
+
+  # if staking
+  # def self.block_creation_loop
+  #   args = CLI::Argument.parse(ARGV)
+  #   if args.miner?
+  #     threshold = 2
+  #     # broadcast I'm a miner
+  #     loop do
+  #       sleep 1
+
+  #       pending_transactions_count = (
+  #         pending_transactions = Ledger::Mempool.pending.values
+  #       ).size
+  #       my_turn = PoS.naive_random_selection(
+  #         seed: Ledger::Repo.active_block.hash,
+  #         node_id: Node.settings.ident
+  #       )
+
+  #       if pending_transactions_count >= threshold && my_turn
+  #         Cocol.logger.info "[Node: #{Node.settings.port}] Creation triggered"
+  #         mining_transactions = pending_transactions
+  #         Ledger::Mempool.remove(mining_transactions)
+  #         Ledger.workflow_create_block(mining_transactions)
+  #       end
+  #     end
+  #   end
+  # end
 
   def self.start
     args = CLI::Argument.parse(ARGV)
@@ -58,11 +71,11 @@ class Cocol::App
     Node.settings.miner = args.miner?
     Node.settings.master = args.master?
 
-    spawn Node.start()
+    spawn Node.start
 
-    if args.update?
-      spawn Ledger.update_ledger()
-    end
+    # if args.update?
+    #   spawn Ledger.update_ledger
+    # end
 
     spawn block_mining_loop
     spawn { cocol.run_api(port: args.port.to_i32) }

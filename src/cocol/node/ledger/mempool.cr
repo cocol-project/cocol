@@ -20,7 +20,7 @@ module Ledger
         pending.delete(arg)
         true
       when Array
-        arg.each { |txn| self.remove(txn.hash)}
+        arg.each { |txn| self.remove(txn.hash) }
         true
       else
         false

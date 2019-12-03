@@ -2,26 +2,51 @@ require "json"
 require "openssl"
 
 module Ledger::Model
-  struct Transaction
+  alias TxnHash = String
+  alias TxnHashSeed = String
+
+  abstract struct AbstractTransaction
     include JSON::Serializable
 
-    alias TxnHash = String
+    abstract def create_seed : TxnHashSeed
 
-    property from : String
-    property to : String
-    property amount : Float32
+    def calc_hash : TxnHash
+      sha = OpenSSL::Digest.new("SHA256")
+      sha.update(create_seed)
+      sha.hexdigest
+    end
+  end
+
+  struct Transaction < AbstractTransaction
+    getter from : String
+    getter to : String
+    getter amount : Int64
     getter hash : TxnHash
     getter timestamp : Int64
 
     def initialize(@from, @to, @amount)
-      @timestamp = Time.utc_now.to_unix
+      @timestamp = Time.utc.to_unix
       @hash = calc_hash
     end
 
-    private def calc_hash : TxnHash
-      sha = OpenSSL::Digest.new("SHA256")
-      sha.update("#{@from}#{@to}#{@amount}#{@timestamp}")
-      sha.hexdigest
+    def create_seed : TxnHashSeed
+      "#{@from}#{@to}#{@amount}#{@timestamp}"
+    end
+  end
+
+  struct Stake < AbstractTransaction
+    getter staker : String
+    getter amount : Int64
+    getter hash : TxnHash
+    getter timestamp : Int64
+
+    def initialize(@staker, @amount)
+      @timestamp = Time.utc.to_unix
+      @hash = calc_hash
+    end
+
+    def create_seed : TxnHashSeed
+      "#{@staker}#{@amount}#{@timestamp}"
     end
   end
 end

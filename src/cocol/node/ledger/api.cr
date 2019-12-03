@@ -17,14 +17,14 @@ get "/transactions" do |_env|
 end
 
 post "/blocks" do |env|
-  new_block = Ledger::Model::Block.from_json(
+  new_block = Ledger::Model::Block::Pow.from_json(
     env.request.body.not_nil!)
-  if Ledger::Repo.save_block(new_block)
+  if Ledger::Repo.save(block: new_block)
     if Node.settings.port > 4000
       Cocol.logger.info "[Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
     end
     spawn do
-      Ledger.workflow_assign_block(new_block)
+      ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
       Messenger.broadcast to: "/blocks", body: new_block.to_json
       Event.broadcast(Event.update("onInitialUpdate").to_json)
     end

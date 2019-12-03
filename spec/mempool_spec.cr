@@ -1,24 +1,29 @@
-require "spec"
-require "../src/cocol/node/ledger/mempool"
+require "./spec_helper"
 
 describe "Ledger::Mempool" do
-  txn = Ledger::Model::Transaction.new("VW", "Merkel", 3_000_f32)
+  let(:txn) { Ledger::Model::Transaction.new("VW", "Merkel", 3_000_i64) }
 
-  context "Managing pending transactions" do
+  describe "Managing pending transactions" do
+    before do
+      Ledger::Mempool.pending.clear
+    end
+
     it "should return false when trying to remove unknown txn" do
-      Ledger::Mempool.remove(txn.hash).should eq(false)
+      Ledger::Mempool.remove(txn.hash).must_equal(false)
     end
 
     it "should return true when trying to add unknown txn" do
-      Ledger::Mempool.add(txn).should eq(true)
+      Ledger::Mempool.add(txn).must_equal(true)
     end
 
     it "should return false when trying to add known txn" do
-      Ledger::Mempool.add(txn).should eq(false)
+      Ledger::Mempool.add(txn)
+      Ledger::Mempool.add(txn).must_equal(false)
     end
 
     it "should return true when trying to remove known txn" do
-      Ledger::Mempool.remove(txn.hash).should eq(true)
+      Ledger::Mempool.add(txn)
+      Ledger::Mempool.remove(txn.hash).must_equal(true)
     end
   end
 end
