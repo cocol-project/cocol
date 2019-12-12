@@ -6,70 +6,43 @@ module Ledger
 
     include Ledger::Model
 
-    alias ParentHash = String
     alias BlockHash = String
-    alias Height = UInt64
-    alias TxnHash = String
+    alias Block = (Model::Block::Pow | Model::Block::Pos)
 
-    def blocks : Hash(BlockHash, Model::Block)
-      @@blocks ||= Hash(BlockHash, Model::Block).new
+    def blocks
+      @@blocks ||= Hash(BlockHash, Block).new
     end
 
-    def ledger : Array(BlockHash)
+    def ledger
       @@ledger ||= Array(BlockHash).new
     end
 
-    def height : Hash(Height, BlockHash)
-      @@height ||= Hash(Height, BlockHash).new
+    def block_at_height
+      @@block_at_height ||= Hash(UInt64, BlockHash).new
     end
 
     # ===
 
-    def active_block : (Nil | Model::Block)
-      if ledger.size > 0
-        blocks[ledger.last]
-      else
-        nil
-      end
+    def ledger_last : Block
+      blocks[ledger.last]
     end
 
-    def established_height : UInt64
-      @@established_height ||= 0_u64
-    end
-
-    def established_height(plus : UInt64) : UInt64
-      @@established_height = self.established_height + plus
-    end
-
-    def established_height=(height : UInt64) : UInt64
-      @@established_height = height
-    end
-
-    def save_block(block : Model::Block) : Bool
+    def save(block : Block) : Bool
       return false if self.blocks[block.hash]?
-      return false if self.height[block.height]?
 
-      # new block add to blocks
       self.blocks[block.hash] = block
-      self.height[block.height] = block.hash
+
       true
     end
 
-    def establish(block_hash : BlockHash, height : Height) : Void
-      self.ledger << block_hash
-      self.established_height(plus: 1_u64)
-    end
+    def finalize(block hash : BlockHash) : Bool
+      finalized_block = self.blocks[hash]
+      return false if self.block_at_height[finalized_block.height]?
 
-    def push(block : Ledger::Model::Block)
-      ProbFin.push(block: block.hash, parent: block.previous_hash)
-    end
+      self.ledger << hash
+      self.block_at_height[finalized_block.height] = hash
 
-    def latest_block_hash : BlockHash
-      current = ProbFin::Chain.dag[active_block.hash]
-      DAG::Graph.tip_of_longest_branch(
-        from: current,
-        in: DAG::Graph.topsort(from: current)
-      )[0].as(DAG::Vertex).name
+      true
     end
   end
 end

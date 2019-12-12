@@ -1,55 +1,60 @@
-require "spec"
-require "../src/cocol/node/ledger/repo.cr"
+require "./spec_helper"
 
 describe "Ledger::Repo" do
-  context "Blocks" do
-    block_a = Ledger::Model::Block.genesis
+  let(:block_a) do
+    Ledger::Model::Block::Pos.new(
+      height: 0_u64,
+      previous_hash: "Olivia",
+      transactions: Array(Ledger::Model::Transaction).new,
+      stakes: Array(Ledger::Model::Stake).new
+    )
+  end
+
+  let(:block_b) do
+    Ledger::Model::Block::Pos.new(
+      height: 1_u64,
+      previous_hash: block_a.hash,
+      transactions: Array(Ledger::Model::Transaction).new,
+      stakes: Array(Ledger::Model::Stake).new
+    )
+  end
+
+  describe "saving blocks" do
+    before do
+      clear_ledger_repo
+    end
 
     it "saves a new block" do
-      saved = Ledger::Repo.save_block(block_a)
+      saved = Ledger::Repo.save(block: block_a)
 
-      saved.should be_true
-      Ledger::Repo.blocks[block_a.hash]?.should be(block_a)
+      # saved.should be_true
+      saved.must_equal(true)
+      Ledger::Repo.blocks[block_a.hash]?.must_equal(block_a)
     end
 
     it "rejects saving if it's a known block" do
-      saved = Ledger::Repo.save_block(block_a)
+      Ledger::Repo.save(block: block_a)
+      saved = Ledger::Repo.save(block: block_a)
 
-      saved.should be_false
-    end
-
-    it "establishes given block" do
-      Ledger::Repo.establish(block_a.hash, block_a.height)
-
-      Ledger::Repo.ledger.should contain(block_a.hash)
-      Ledger::Repo.established_height.should eq(1)
+      saved.must_equal(false)
     end
   end
 
-  context "Transaction" do
-    txn = Ledger::Model::Transaction.new(
-      from: "Olivia",
-      to: "Teddyshum",
-      amount: 100_f32
-    )
-
-    it "saves to pending transactions" do
-      saved = Ledger::Mempool.add(txn)
-
-      saved.should be_true
-      Ledger::Mempool.pending.empty?.should be_false
+  describe "finality" do
+    before do
+      clear_ledger_repo
+      Ledger::Repo.save(block: block_a)
     end
 
-    it "rejects if it's a known transaction" do
-      saved = Ledger::Mempool.add(txn)
+    it "finalizes block" do
+      Ledger::Repo.save(block: block_b)
+      Ledger::Repo.finalize block: block_a.hash
+      Ledger::Repo.finalize block: block_b.hash
 
-      saved.should be_false
-    end
+      Ledger::Repo.ledger_last.must_equal(block_b)
 
-    it "deletes transactions" do
-      Ledger::Mempool.remove([txn])
-
-      Ledger::Mempool.pending.empty?.should be_true
+      Ledger::Repo.block_at_height[0_u64].must_equal(block_a.hash)
+      Ledger::Repo.block_at_height[1_u64].must_equal(block_b.hash)
     end
   end
 end

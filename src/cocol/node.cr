@@ -3,7 +3,7 @@ module Node
 
   # should be e2e tested
   def start
-    Ledger.workflow_genesis_block
+    Ledger::Pow.genesis
 
     if !Node.settings.master
       Messenger.establish_network_position

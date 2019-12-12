@@ -6,85 +6,87 @@ require "./transaction"
 
 require "btcpow"
 
-module Ledger
-  module Model
-    class Block
-      MIN_NBITS = "20000010"
+module Ledger::Model
+  module Block
+    alias BlockHash = String
+    alias BlockHashSeed = String
 
-      alias BlockHash = String
-
+    abstract class Base
       include JSON::Serializable
       include Ledger::Model
 
       getter hash : String
       getter timestamp : Int64
       getter height : UInt64
-      getter nonce : UInt64
-      getter nbits : String
-      getter randr : UInt16
       getter previous_hash : String
-      property transactions : Array(Transaction)
 
-      record BlockData,
-        height : UInt64,
-        timestamp : Int64,
-        transactions : Array(String),
-        randr : UInt16,
-        previous_hash : BlockHash do
-        def to_input : String
-          "#{height}#{timestamp}#{transactions}#{previous_hash}#{randr}"
-        end
+      # abstract def self.genesis
+      private abstract def hash_seed : BlockHashSeed
+      private abstract def calc_hash
+    end
+
+    class Pos < Base
+      property transactions : Array(Transaction)
+      property stakes : Array(Stake)
+
+      def initialize(@height,
+                     @transactions,
+                     @stakes,
+                     @previous_hash)
+        @timestamp = Time.utc.to_unix
+        @hash = calc_hash
       end
 
+      private def hash_seed : BlockHashSeed
+        transactions = @transactions.map { |txn| txn.hash }
+        "#{@height}#{@timestamp}#{transactions}#{@previous_hash}"
+      end
+
+      private def calc_hash
+        sha256 = OpenSSL::Digest.new("SHA256")
+        sha256.update(hash_seed())
+        sha256.hexdigest
+      end
+    end
+
+    class Pow < Base
+      MIN_NBITS = "20000010"
+
+      getter nonce : UInt64
+      getter nbits : String
+      property transactions : Array(Transaction)
+
+      # This is useful for testing and the genesis block.
+      # It circumvents mining and should not be used otherwise
       def initialize(@hash,
                      @timestamp,
                      @height,
                      @nonce,
                      @nbits,
-                     @randr,
                      @previous_hash,
                      @transactions)
       end
 
-      def self.new(height : UInt64,
-                   transactions : Array(Transaction),
-                   previous_hash : String,
-                   difficulty : String)
-        #sleep Random.rand(5.0..6.1)
-        block_data = BlockData.new(
-          timestamp: Time.utc.to_unix,
-          height: height,
-          previous_hash: previous_hash,
-          randr: Random.rand(0_u16..UInt16::MAX),
-          transactions: transactions.map { |txn| txn.hash }
-        )
-        Cocol.logger.info("Miner: #{Node.settings.port} Difficulty: #{difficulty}")
-        work = BTCPoW.mine(difficulty: difficulty,
-          for: block_data.to_input)
+      def initialize(@height,
+                     @transactions,
+                     @previous_hash,
+                     @nbits)
+        @timestamp = Time.utc.to_unix
 
-        Block.new(
-          hash: work.hash,
-          timestamp: block_data.timestamp,
-          height: height,
-          nonce: work.nonce,
-          randr: block_data.randr,
-          nbits: difficulty,
-          previous_hash: previous_hash,
-          transactions: transactions
-        )
+        Cocol.logger.info("Miner: #{Node.settings.port} Difficulty: #{@nbits}")
+        pow = calc_hash()
+
+        @hash = pow.hash
+        @nonce = pow.nonce
       end
 
-      def self.genesis
-        Block.new(
-          hash: "00f82f15d9fee292860b2a37183d769efd3b617451c04017f700238fd472e8bb",
-          timestamp: 1449970561_i64,
-          height: 0_u64,
-          nonce: 144_u64,
-          nbits: MIN_NBITS,
-          randr: Random.rand(0_u16..UInt16::MAX),
-          previous_hash: "Olivia",
-          transactions: Array(Transaction).new
-        )
+      private def hash_seed : BlockHashSeed
+        transactions = @transactions.map { |txn| txn.hash }
+        "#{@height}#{@timestamp}#{transactions}#{@previous_hash}"
+      end
+
+      private def calc_hash
+        BTCPoW.mine(difficulty: @nbits, for: hash_seed())
       end
     end
   end

@@ -1,40 +1,47 @@
-require "spec"
-require "../src/cocol/node/ledger/model/transaction.cr"
+require "./spec_helper"
 
 describe "Ledger::Model::Transaction" do
-  context "JSON Serializable" do
-    txn_json = {
-      from:      "Olivia",
-      to:        "Teddyshum",
-      amount:    100,
-      timestamp: 1449970561,
-      hash:      "c9b0f2181f2783594c8c30f79ef8ff6231494ab50013ed0bb0fc2cd75408f791",
-    }.to_json
+  let(:hash) { "c9b0f2181f2783594c8c30f79ef8ff6231494ab50013ed0bb0fc2cd75408f791" }
+  let(:from) { "Me" }
+  let(:to) { "You" }
+  let(:amount) { 100 }
+  let(:timestamp) { 1449970561 }
+
+  describe "JSON Serializable" do
+    let(:txn_json) do
+      Ledger::Model::Transaction.from_json({
+        from:      from,
+        to:        to,
+        amount:    amount,
+        timestamp: timestamp,
+        hash:      hash,
+      }.to_json)
+    end
 
     it "should initialize successfully" do
-      txn = Ledger::Model::Transaction.from_json(txn_json)
-
-      txn.from.should eq("Olivia")
-      txn.to.should eq("Teddyshum")
-      txn.amount.should eq(100_f32)
-      txn.timestamp.should eq(1449970561_i64)
-      txn.hash.should eq("c9b0f2181f2783594c8c30f79ef8ff6231494ab50013ed0bb0fc2cd75408f791")
+      txn_json.from.must_equal(from)
+      txn_json.to.must_equal(to)
+      txn_json.amount.must_equal(amount)
+      txn_json.timestamp.must_equal(timestamp)
+      txn_json.hash.must_equal(hash)
     end
   end
 
-  context "Construct" do
-    txn = Ledger::Model::Transaction.new(
-      from: "Olivia",
-      to: "Teddyshum",
-      amount: 100_f32
-    )
+  describe "Construct" do
+    let(:txn) do
+      Ledger::Model::Transaction.new(
+        from: from,
+        to: to,
+        amount: amount.to_i64
+      )
+    end
 
     it "should generate timestamp" do
-      txn.timestamp.should be_truthy
+      txn.timestamp.wont_be_nil
     end
 
     it "should generate hash" do
-      txn.hash.should be_truthy
+      txn.hash.wont_be_nil
     end
   end
 end
