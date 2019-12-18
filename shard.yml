@@ -1,5 +1,5 @@
 name: cocol
-version: v0.2.0
+version: v0.2.1
 
 authors:
   - Cristian Șerb <cserb@pm.me>
@@ -17,14 +17,14 @@ dependencies:
   kemal:
     github: kemalcr/kemal
     version: ~> 0.26.0
-  totem:
-    github: icyleaf/totem
-    version: ~> 0.5.1
   btcpow:
     github: cocol-project/btcpow
   probfin:
     github: cocol-project/probfin
     version: 0.2.1
+  cocolpos:
+    github: cocol-project/cocolpos
+    branch: master
 
 development_dependencies:
   minitest:

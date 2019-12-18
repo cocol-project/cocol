@@ -28,11 +28,22 @@ module Ledger::Model
     class Pos < Base
       property transactions : Array(Transaction)
       property stakes : Array(Stake)
+      getter miner : String
+
+      def initialize(@hash,
+                     @timestamp,
+                     @height,
+                     @previous_hash,
+                     @transactions,
+                     @stakes,
+                     @miner)
+      end
 
       def initialize(@height,
                      @transactions,
                      @stakes,
-                     @previous_hash)
+                     @previous_hash,
+                     @miner)
         @timestamp = Time.utc.to_unix
         @hash = calc_hash
       end

@@ -74,11 +74,11 @@ module Ledger
       )
 
       if Ledger::Repo.save(block: new_block)
-        Cocol.logger.info "[Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Mined: #{new_block.hash}"
+        Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Mined: #{new_block.hash}"
         Ledger::Mempool.remove(transactions)
         ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
 
-        spawn { Messenger.broadcast to: "/blocks", body: new_block.to_json }
+        spawn { Messenger.broadcast to: "/blocks/pow", body: new_block.to_json }
 
         spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
         spawn Event.broadcast(Event.block(new_block).to_json)
@@ -107,15 +107,20 @@ module Ledger
       Ledger::Repo.block_at_height.clear
 
       genesis = Ledger::Model::Block::Pos.new(
+        hash: "00000f33293fc3092f436fec6480ba8460589087f2118c1c2d4a60f35372f297",
+        timestamp: 1449966000_i64,
         height: 0_u64,
         transactions: Array(Ledger::Model::Transaction).new,
         stakes: Array(Ledger::Model::Stake).new,
-        previous_hash: "Olivia"
+        previous_hash: "Olivia",
+        miner: "3000"
       )
 
       Ledger::Repo.blocks[genesis.hash] = genesis
       Ledger::Repo.finalize(block: genesis.hash)
       ProbFin.push(block: genesis.hash, parent: genesis.previous_hash)
+
+      new_block_if_leader
     end
 
     def mine(
@@ -125,22 +130,87 @@ module Ledger
       previous_hash = Ledger::Helper.probfin_previous_hash
       height = Ledger::Repo.blocks[previous_hash].height + 1
 
+      stakes << Ledger::Model::Stake.new(
+        staker: Node.settings.port.to_s,
+        amount: 33_i64,
+      )
+
       new_block = Ledger::Model::Block::Pos.new(
         height: height,
         transactions: transactions,
         stakes: stakes,
         previous_hash: previous_hash,
+        miner: Node.settings.port.to_s,
       )
 
       if Ledger::Repo.save(block: new_block)
-        Cocol.logger.info "[Node: #{Node.settings.port}] Height: #{new_block.height} Mined: #{new_block.hash}"
+        Cocol.logger.info "Height: #{new_block.height} Mined: #{new_block.hash[-7..-1]}"
         Ledger::Mempool.remove(transactions)
         ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
 
-        spawn { Messenger.broadcast to: "/blocks", body: new_block.to_json }
+        spawn { Messenger.broadcast to: "/blocks/pos", body: new_block.to_json }
 
         spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
         spawn Event.broadcast(Event.block(new_block).to_json)
+        remove_validator(id: Node.settings.port.to_s)
+        add_stakers new_block.stakes
+        new_block_if_leader
+      end
+    end
+
+    def validate(block : Ledger::Model::Block::Pos) : Nil
+      if Ledger::Repo.save(block: block)
+        Cocol.logger.debug "BLOCK Height: #{block.height} | Saved: #{block.hash[-7..-1]}"
+        Ledger::Mempool.remove block.transactions
+
+        remove_validator block.miner
+        add_stakers block.stakes
+
+        spawn do
+          ProbFin.push(block: block.hash, parent: block.previous_hash)
+          Messenger.broadcast to: "/blocks/pos", body: block.to_json
+          Event.broadcast(Event.update("onInitialUpdate").to_json)
+          new_block_if_leader
+        end
+      end
+    end
+
+    def add_stakers(stakes : Array(Ledger::Model::Stake)) : Nil
+      stakes.each do |s|
+        Cocol.logger.debug "VALIDATOR ADDED: #{s.staker}"
+        Cocol::Pos::ValidatorPool.add(id: s.staker, timestamp: s.timestamp)
+      end
+    end
+
+    def remove_validator(id : String)
+      Cocol.logger.debug "VALIDATOR REMOVED: #{id}"
+      Cocol::Pos::ValidatorPool.remove id
+      Cocol.logger.debug "VALIDATORS: #{Cocol::Pos::ValidatorPool.validators}"
+    end
+
+    def new_block_if_leader
+      if Node.settings.miner
+        my_turn = Cocol::Pos.naive_leader?(
+          seed: Ledger::Helper.probfin_previous_hash,
+          validator_id: Node.settings.port.to_s
+        )
+        Cocol.logger.debug "MY_TURN: #{my_turn}"
+        spawn block_creation_loop if my_turn
+      end
+    end
+
+    def block_creation_loop
+      Cocol.logger.info "Creation loop triggered"
+      threshold = 2
+      loop do
+        sleep 0.333
+        if (pending_transactions = Ledger::Mempool.pending.values).size >= threshold
+          mining_transactions = pending_transactions
+          Ledger::Mempool.remove(mining_transactions)
+          Ledger::Pos.mine(mining_transactions, Array(Ledger::Model::Stake).new)
+
+          break
+        end
       end
     end
   end

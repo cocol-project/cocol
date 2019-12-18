@@ -1,3 +1,5 @@
+require "./cocol/logger.cr"
+
 require "json"
 require "kemal"
 require "socket"
@@ -5,8 +7,7 @@ require "totem"
 require "uuid"
 require "uuid/json"
 require "probfin"
-
-require "./cocol/logger.cr"
+require "cocolpos/pos"
 
 require "./cocol/cli/argument"
 

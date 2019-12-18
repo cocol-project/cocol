@@ -16,12 +16,12 @@ get "/transactions" do |_env|
   Ledger::Mempool.pending.to_json
 end
 
-post "/blocks" do |env|
+post "/blocks/pow" do |env|
   new_block = Ledger::Model::Block::Pow.from_json(
     env.request.body.not_nil!)
   if Ledger::Repo.save(block: new_block)
     if Node.settings.port > 4000
-      Cocol.logger.info "[Node: #{Node.settings.port}] Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
+      Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
     end
     spawn do
       ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
@@ -29,6 +29,12 @@ post "/blocks" do |env|
       Event.broadcast(Event.update("onInitialUpdate").to_json)
     end
   end
+end
+
+post "/blocks/pos" do |env|
+  new_block = Ledger::Model::Block::Pos.from_json(
+    env.request.body.not_nil!)
+  Ledger::Pos.validate new_block
 end
 
 get "/blocks" do |_env|
