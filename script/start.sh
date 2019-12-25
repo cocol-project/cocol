@@ -11,6 +11,7 @@ for ((i=1;i<=nodes;i++));
 do
     # ../cocol -p $(($startPort + $i)) -a $(($startApiPort + $i)) > /dev/null 2>&1 &
     ./cocol -p $((startPort + i)) --max-connections 5 1>> /tmp/cocol.log &
+    #./cocol -p $((startPort + i)) --max-connections 5 > /tmp/cocol.log 2>&1 &
     echo $i
     sleep 0.2
 done
@@ -19,6 +20,7 @@ for ((i=1;i<=miner;i++));
 do
     # ../cocol -p $(($startPort + $i)) -a $(($startApiPort + $i)) > /dev/null 2>&1 &
     ./cocol -p $((4000 + i)) --max-connections 5 --miner 1>> /tmp/cocol.log &
+    #./cocol -p $((4000 + i)) --max-connections 5 --miner > /tmp/cocol.log 2>&1 &
     echo $i
     sleep 0.2
 done

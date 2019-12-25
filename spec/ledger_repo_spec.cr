@@ -6,7 +6,8 @@ describe "Ledger::Repo" do
       height: 0_u64,
       previous_hash: "Olivia",
       transactions: Array(Ledger::Model::Transaction).new,
-      stakes: Array(Ledger::Model::Stake).new
+      stakes: Array(Ledger::Model::Stake).new,
+      miner: "3000"
     )
   end
 
@@ -15,7 +16,8 @@ describe "Ledger::Repo" do
       height: 1_u64,
       previous_hash: block_a.hash,
       transactions: Array(Ledger::Model::Transaction).new,
-      stakes: Array(Ledger::Model::Stake).new
+      stakes: Array(Ledger::Model::Stake).new,
+      miner: "3000"
     )
   end
 

@@ -2,11 +2,15 @@ version: 1.0
 shards:
   btcpow:
     github: cocol-project/btcpow
-    commit: 5788113e29229044a06ed323e2fa921f803af40d
+    commit: a0af626e3c789e2152663ec09724165d7308535c
 
   callback:
     github: drujensen/callback
     version: 0.7.1
+
+  cocolpos:
+    github: cocol-project/cocolpos
+    commit: bded6fde3dbdb594adab335200d1977bbc118aa7
 
   exception_page:
     github: crystal-loot/exception_page
@@ -14,7 +18,7 @@ shards:
 
   icr:
     github: crystal-community/icr
-    commit: 93108126bd3b74badb23c365364ec0258dc178a3
+    commit: 08c1f60e2f4b3b1fa662e19fce27748d136e2808
 
   kemal:
     github: kemalcr/kemal
@@ -32,10 +36,6 @@ shards:
     github: drujensen/optarg
     version: 0.7.0
 
-  popcorn:
-    github: icyleaf/popcorn
-    version: 0.2.2
-
   probfin:
     github: cocol-project/probfin
     version: 0.2.1
@@ -44,11 +44,11 @@ shards:
     github: luislavena/radix
     version: 0.3.9
 
+  readline:
+    github: crystal-lang/crystal-readline
+    commit: 0fb7d186da8e1b157998d98d1c96e99699b791eb
+
   string_inflection:
     github: mosop/string_inflection
     version: 0.2.1
-
-  totem:
-    github: icyleaf/totem
-    version: 0.5.2
 

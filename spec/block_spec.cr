@@ -46,7 +46,8 @@ describe "Ledger::Model::Block" do
           height: height,
           previous_hash: previous_hash,
           stakes: stakes,
-          transactions: Array(Ledger::Model::Transaction).new
+          transactions: Array(Ledger::Model::Transaction).new,
+          miner: "3000"
         )
       end
 
