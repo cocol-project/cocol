@@ -1,16 +1,4 @@
-require "http/client"
-
-require "./messenger/struct/handshake"
-require "./messenger/struct/peer"
-
-require "./messenger/repo"
-
-require "./ledger"
-require "./ledger/model/transaction"
-
-require "./settings"
-
-require "./messenger/api.cr"
+require "./messenger/**"
 
 module Messenger
   extend self

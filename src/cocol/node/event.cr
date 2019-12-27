@@ -1,16 +1,10 @@
-require "http/web_socket"
-
-require "./event/repo"
-
-require "./messenger/repo"
-require "./ledger/repo"
-
-require "./event/api.cr"
+require "./event/**"
+require "./messenger"
+require "./ledger"
 
 module Event
   extend self
 
-  # should be Enum
   alias EventType = String
   alias TransactionEvent = NamedTuple
   alias PeerConnectionEvent = NamedTuple

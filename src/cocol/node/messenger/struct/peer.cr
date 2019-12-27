@@ -1,10 +1,3 @@
-require "json"
-require "uuid"
-require "uuid/json"
-require "socket"
-
-require "./handshake.cr"
-
 module Messenger::Struct
   struct Peer
     include JSON::Serializable

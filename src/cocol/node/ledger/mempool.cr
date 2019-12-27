@@ -1,4 +1,4 @@
-require "./model/transaction"
+require "./model/**"
 
 module Ledger
   module Mempool

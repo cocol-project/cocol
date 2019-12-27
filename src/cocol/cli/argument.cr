@@ -1,5 +1,3 @@
-require "optarg"
-
 class CLI::Argument < Optarg::Model
   arg "command"
   string %w(-p --port)

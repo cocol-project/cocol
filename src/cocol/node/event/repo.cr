@@ -1,5 +1,3 @@
-require "socket"
-
 module Event
   module Repo
     extend self

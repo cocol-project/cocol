@@ -1,11 +1,3 @@
-require "openssl"
-require "json"
-require "big"
-
-require "./transaction"
-
-require "btcpow"
-
 module Ledger::Model
   module Block
     alias BlockHash = String

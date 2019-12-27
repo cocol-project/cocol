@@ -1,6 +1,3 @@
-require "json"
-require "openssl"
-
 module Ledger::Model
   alias TxnHash = String
   alias TxnHashSeed = String

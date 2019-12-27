@@ -1,18 +1,6 @@
-require "../logger.cr"
-require "./ledger/model/block"
-require "./ledger/model/transaction"
-
-require "./ledger/repo"
-require "./ledger/mempool"
-
-require "./event.cr"
-
-require "./settings.cr"
-require "./messenger.cr"
-
-require "./ledger/api.cr"
-
-require "probfin"
+require "./ledger/**"
+require "./event"
+require "./messenger"
 
 module Ledger
   module Helper

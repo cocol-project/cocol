@@ -1,5 +1,3 @@
-require "./logger.cr"
-
 module Node
   extend self
 

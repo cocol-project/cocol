@@ -1,5 +1,3 @@
-require "./model/*"
-
 module Ledger
   module Repo
     extend self

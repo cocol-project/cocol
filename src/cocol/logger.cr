@@ -1,5 +1,3 @@
-require "logger"
-
 module Cocol
   extend self
 

@@ -1,5 +1,3 @@
-require "./struct/peer.cr"
-
 module Messenger
   module Repo
     extend self

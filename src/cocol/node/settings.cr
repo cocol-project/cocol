@@ -1,5 +1,3 @@
-require "uuid"
-
 module Node
   class Settings
     getter ident : UUID
