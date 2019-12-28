@@ -5,11 +5,9 @@ module Ledger::Model
   abstract struct AbstractTransaction
     include JSON::Serializable
 
-    abstract def create_seed : TxnHashSeed
-
-    def calc_hash : TxnHash
+    private def calc_hash(*seed) : TxnHash
       sha = OpenSSL::Digest.new("SHA256")
-      sha.update(create_seed)
+      sha.update(seed.join(""))
       sha.hexdigest
     end
   end
@@ -23,11 +21,7 @@ module Ledger::Model
 
     def initialize(@from, @to, @amount)
       @timestamp = Time.utc.to_unix
-      @hash = calc_hash
-    end
-
-    def create_seed : TxnHashSeed
-      "#{@from}#{@to}#{@amount}#{@timestamp}"
+      @hash = calc_hash(from, to, amount, timestamp)
     end
   end
 
@@ -39,11 +33,7 @@ module Ledger::Model
 
     def initialize(@staker, @amount)
       @timestamp = Time.utc.to_unix
-      @hash = calc_hash
-    end
-
-    def create_seed : TxnHashSeed
-      "#{@staker}#{@amount}#{@timestamp}"
+      @hash = calc_hash(staker, amount, timestamp)
     end
   end
 end
