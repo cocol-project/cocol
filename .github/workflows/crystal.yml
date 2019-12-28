@@ -15,6 +15,6 @@ jobs:
     - name: Install dependencies
       run: shards install
     - name: Run tests
-      run: crystal spec
+      run: crystal spec --error-trace -t -Dpreview_mt
     - name: Check formatting
       run: crystal tool format --check
