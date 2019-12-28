@@ -3,7 +3,7 @@ module Ledger::Model
     alias BlockHash = String
     alias BlockHashSeed = String
 
-    abstract class Base
+    abstract struct Base
       include JSON::Serializable
       include Ledger::Model
 
@@ -12,14 +12,13 @@ module Ledger::Model
       getter height : UInt64
       getter previous_hash : String
 
-      # abstract def self.genesis
       private abstract def hash_seed : BlockHashSeed
       private abstract def calc_hash
     end
 
-    class Pos < Base
-      property transactions : Array(Transaction)
-      property stakes : Array(Stake)
+    struct Pos < Base
+      getter transactions : Array(Transaction)
+      getter stakes : Array(Stake)
       getter miner : String
 
       def initialize(@hash,
@@ -41,7 +40,7 @@ module Ledger::Model
       end
 
       private def hash_seed : BlockHashSeed
-        transactions = @transactions.map { |txn| txn.hash }
+        transactions = @transactions.map { |txn| txn.hash }.join("")
         "#{@height}#{@timestamp}#{transactions}#{@previous_hash}"
       end
 
@@ -52,15 +51,13 @@ module Ledger::Model
       end
     end
 
-    class Pow < Base
+    struct Pow < Base
       MIN_NBITS = "20000010"
 
       getter nonce : UInt64
       getter nbits : String
-      property transactions : Array(Transaction)
+      getter transactions : Array(Transaction)
 
-      # This is useful for testing and the genesis block.
-      # It circumvents mining and should not be used otherwise
       def initialize(@hash,
                      @timestamp,
                      @height,
@@ -76,15 +73,13 @@ module Ledger::Model
                      @nbits)
         @timestamp = Time.utc.to_unix
 
-        Cocol.logger.info("Miner: #{Node.settings.port} Difficulty: #{@nbits}")
         pow = calc_hash()
-
         @hash = pow.hash
         @nonce = pow.nonce
       end
 
       private def hash_seed : BlockHashSeed
-        transactions = @transactions.map { |txn| txn.hash }
+        transactions = @transactions.map { |txn| txn.hash }.join("")
         "#{@height}#{@timestamp}#{transactions}#{@previous_hash}"
       end
 
