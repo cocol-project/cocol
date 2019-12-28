@@ -4,13 +4,13 @@ development:
 	crystal build -Dpreview_mt src/cocol.cr --warnings all --progress
 
 
-prepare: ameba format
-
-ameba:
-	ameba
+prepare: format ameba test
 
 format:
 	crystal tool format
+
+ameba:
+	ameba
 
 test:
 	crystal spec --error-trace

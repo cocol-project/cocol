@@ -133,34 +133,26 @@ module Ledger
 
       if Ledger::Repo.save(block: new_block)
         Cocol.logger.info "Height: #{new_block.height} Mined: #{new_block.hash[-7..-1]}"
-        Ledger::Mempool.remove(transactions)
-        ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
-
-        spawn { Messenger.broadcast to: "/blocks/pos", body: new_block.to_json }
-
-        spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
         spawn Event.broadcast(Event.block(new_block).to_json)
-        remove_validator(id: Node.settings.port.to_s)
-        add_stakers new_block.stakes
-        new_block_if_leader
+        on_save new_block
       end
     end
 
     def validate(block : Ledger::Model::Block::Pos) : Nil
       if Ledger::Repo.save(block: block)
         Cocol.logger.debug "BLOCK Height: #{block.height} | Saved: #{block.hash[-7..-1]}"
-        Ledger::Mempool.remove block.transactions
-
-        remove_validator block.miner
-        add_stakers block.stakes
-
-        spawn do
-          ProbFin.push(block: block.hash, parent: block.previous_hash)
-          Messenger.broadcast to: "/blocks/pos", body: block.to_json
-          Event.broadcast(Event.update("onInitialUpdate").to_json)
-          new_block_if_leader
-        end
+        on_save block
       end
+    end
+
+    def on_save(block)
+      Ledger::Mempool.remove block.transactions
+      ProbFin.push(block: block.hash, parent: block.previous_hash)
+      spawn { Messenger.broadcast to: "/blocks/pos", body: block.to_json }
+      spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
+      remove_validator block.miner
+      add_stakers block.stakes
+      new_block_if_leader
     end
 
     def add_stakers(stakes : Array(Ledger::Model::Stake)) : Nil

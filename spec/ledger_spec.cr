@@ -9,7 +9,7 @@ describe Ledger::Pow do
   end
 
   describe "Mine" do
-    it "mines a block correctly" do
+    it "mines a block" do
       transactions = Array(Ledger::Model::Transaction).new
       txn = Ledger::Model::Transaction.new(
         from: "me",

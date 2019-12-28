@@ -41,8 +41,10 @@ module Event
     update
   end
 
-  def transaction(event : EventType,
-                  transaction : Ledger::Model::Transaction) : TransactionEvent
+  def transaction(
+    event : EventType,
+    transaction : Ledger::Model::Transaction
+  ) : TransactionEvent
     {
       event:  event,
       hash:   transaction.hash,
