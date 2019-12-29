@@ -43,10 +43,10 @@ module Ledger
 
       if height % 20 == 0 # retargeting
         Cocol.logger.info "Retargeting Now"
-        difficulty = BTCPoW::Utils.retarget(
+        difficulty = CCL::Pow::Utils.retarget(
           **timespan_from_height(height: height),
           wanted_timespan: RETARGET_TIMESPAN,
-          current_target: BTCPoW::Utils.calculate_target(
+          current_target: CCL::Pow::Utils.calculate_target(
             from: Ledger::Repo.blocks[previous_hash].as(Model::Block::Pow).nbits
           )
         )

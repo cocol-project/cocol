@@ -84,7 +84,7 @@ module Ledger::Model
       end
 
       private def calc_hash
-        BTCPoW.mine(difficulty: @nbits, for: hash_seed())
+        CCL::Pow.mine(difficulty: @nbits, for: hash_seed())
       end
     end
   end

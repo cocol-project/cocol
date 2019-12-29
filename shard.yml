@@ -17,8 +17,8 @@ dependencies:
   kemal:
     github: kemalcr/kemal
     version: ~> 0.26.0
-  btcpow:
-    github: cocol-project/btcpow
+  ccl-pow:
+    github: cocol-project/ccl-pow
   probfin:
     github: cocol-project/probfin
     version: 0.2.1

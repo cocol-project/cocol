@@ -9,7 +9,7 @@ require "optarg"
 require "uuid/json"
 require "http/web_socket"
 require "http/client"
-require "btcpow"
+require "ccl-pow"
 require "probfin"
 require "ccl-pos"
 
