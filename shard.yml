@@ -22,8 +22,8 @@ dependencies:
   probfin:
     github: cocol-project/probfin
     version: 0.2.1
-  cocolpos:
-    github: cocol-project/cocolpos
+  ccl-pos:
+    github: cocol-project/ccl-pos
     branch: master
 
 development_dependencies:

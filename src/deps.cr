@@ -11,7 +11,7 @@ require "http/web_socket"
 require "http/client"
 require "btcpow"
 require "probfin"
-require "cocolpos/pos"
+require "ccl-pos"
 
 require "./cocol/cli/argument"
 require "./cocol/node/settings"

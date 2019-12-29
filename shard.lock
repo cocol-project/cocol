@@ -8,9 +8,9 @@ shards:
     github: drujensen/callback
     version: 0.7.1
 
-  cocolpos:
-    github: cocol-project/cocolpos
-    commit: bded6fde3dbdb594adab335200d1977bbc118aa7
+  ccl-pos:
+    github: cocol-project/ccl-pos
+    commit: 878225d3ed4fca2ffa3c9f631bab4898ac20d747
 
   exception_page:
     github: crystal-loot/exception_page

@@ -158,19 +158,19 @@ module Ledger
     def add_stakers(stakes : Array(Ledger::Model::Stake)) : Nil
       stakes.each do |s|
         Cocol.logger.debug "VALIDATOR ADDED: #{s.staker}"
-        Cocol::Pos::ValidatorPool.add(id: s.staker, timestamp: s.timestamp)
+        CCL::Pos::ValidatorPool.add(id: s.staker, timestamp: s.timestamp)
       end
     end
 
     def remove_validator(id : String)
       Cocol.logger.debug "VALIDATOR REMOVED: #{id}"
-      Cocol::Pos::ValidatorPool.remove id
-      Cocol.logger.debug "VALIDATORS: #{Cocol::Pos::ValidatorPool.validators}"
+      CCL::Pos::ValidatorPool.remove id
+      Cocol.logger.debug "VALIDATORS: #{CCL::Pos::ValidatorPool.validators}"
     end
 
     def new_block_if_leader
       if Node.settings.miner
-        my_turn = Cocol::Pos.naive_leader?(
+        my_turn = CCL::Pos.naive_leader?(
           seed: Ledger::Helper.probfin_previous_hash,
           validator_id: Node.settings.port.to_s
         )
