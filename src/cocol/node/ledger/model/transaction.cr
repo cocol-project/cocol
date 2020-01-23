@@ -15,7 +15,7 @@ module Ledger::Model
   struct Transaction < AbstractTransaction
     getter from : String
     getter to : String
-    getter amount : Int64
+    getter amount : UInt64
     getter hash : TxnHash
     getter timestamp : Int64
 
@@ -27,7 +27,7 @@ module Ledger::Model
 
   struct Stake < AbstractTransaction
     getter staker : String
-    getter amount : Int64
+    getter amount : UInt64
     getter hash : TxnHash
     getter timestamp : Int64
 

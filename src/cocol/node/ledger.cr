@@ -113,7 +113,7 @@ module Ledger
 
       stakes << Ledger::Model::Stake.new(
         staker: Node.settings.port.to_s,
-        amount: 33_i64,
+        amount: 33_u64,
       )
 
       new_block = Ledger::Model::Block::Pos.new(

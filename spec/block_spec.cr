@@ -32,11 +32,11 @@ describe "Ledger::Model::Block" do
         [
           Ledger::Model::Stake.new(
             staker: nodes[0],
-            amount: 50_i64
+            amount: 50_u64
           ),
           Ledger::Model::Stake.new(
             staker: nodes[1],
-            amount: 50_i64
+            amount: 50_u64
           ),
         ]
       end
