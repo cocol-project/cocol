@@ -2,9 +2,6 @@
 /lib/
 /bin/
 /.shards/
+*.dwarf
 
 TODOs.org
-
-cocol
-!cocol/*
-cocol.dwarf

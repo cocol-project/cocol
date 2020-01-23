@@ -32,7 +32,7 @@ module Event
       miner: Node.settings.miner,
     }
 
-    latest_block = Ledger::Repo.blocks[Ledger::Helper.probfin_previous_hash]
+    latest_block = Ledger::Repo.blocks[Ledger::Util.probfin_tip_hash]
     update = update.merge({
       height: latest_block.height,
       hash:   latest_block.hash,
