@@ -4,7 +4,7 @@ describe "Ledger::Model::Transaction" do
   let(:hash) { "c9b0f2181f2783594c8c30f79ef8ff6231494ab50013ed0bb0fc2cd75408f791" }
   let(:from) { "Me" }
   let(:to) { "You" }
-  let(:amount) { 100 }
+  let(:amount) { 100_u64 }
   let(:timestamp) { 1449970561 }
 
   describe "JSON Serializable" do
@@ -32,7 +32,7 @@ describe "Ledger::Model::Transaction" do
       Ledger::Model::Transaction.new(
         from: from,
         to: to,
-        amount: amount.to_i64
+        amount: amount
       )
     end
 

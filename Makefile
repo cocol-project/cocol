@@ -13,4 +13,4 @@ ameba:
 	ameba
 
 test:
-	crystal spec --error-trace -t -Dpreview_mt
+	crystal spec --error-trace -t -Dpreview_mt $(spec)

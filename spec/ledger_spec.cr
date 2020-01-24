@@ -14,7 +14,7 @@ describe Ledger::Pow do
       txn = Ledger::Model::Transaction.new(
         from: "me",
         to: "you",
-        amount: 1_i64
+        amount: 1_u64
       )
       transactions << txn
 

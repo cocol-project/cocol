@@ -1,7 +1,9 @@
 require "./spec_helper"
 
 describe "Ledger::Mempool" do
-  let(:txn) { Ledger::Model::Transaction.new("VW", "Merkel", 3_000_i64) }
+  let(:txn) do
+    Ledger::Model::Transaction.new("VW", "Merkel", 3_000_u64)
+  end
 
   describe "Managing pending transactions" do
     before do

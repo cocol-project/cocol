@@ -3,17 +3,11 @@ require "./event"
 require "./messenger"
 
 module Ledger
-  module Helper
-    extend self
-
-    def probfin_previous_hash : String
-      current = ProbFin::Chain.dag[Ledger::Repo.ledger.last]
-      DAG.tip_of_longest_branch(from: current).vertex.name
-    end
-  end
+  GENESIS_CREATOR = "Olivia"
 
   module Pow
     extend self
+    include Ledger::Model
 
     RETARGET_TIMESPAN = 60_f64 # In seconds (I think *g*)
 
@@ -28,8 +22,9 @@ module Ledger
         height: 0_u64,
         nonce: 2174333_u64,
         nbits: Ledger::Model::Block::Pow::MIN_NBITS,
-        previous_hash: "Olivia",
-        transactions: Array(Ledger::Model::Transaction).new
+        previous_hash: Ledger::GENESIS_CREATOR,
+        transactions: genesis_transactions,
+        coinbase: Block::Coinbase.new("Olivia")
       )
 
       Ledger::Repo.blocks[genesis.hash] = genesis
@@ -38,8 +33,8 @@ module Ledger
     end
 
     def mine(transactions : Array(Ledger::Model::Transaction)) : Ledger::Model::Block::Pow
-      previous_hash = Ledger::Helper.probfin_previous_hash
-      height = Ledger::Repo.blocks[previous_hash].height + 1
+      tip_hash = Ledger::Util.probfin_tip_hash
+      height = Ledger::Repo.blocks[tip_hash].height + 1
 
       if height % 20 == 0 # retargeting
         Cocol.logger.info "Retargeting Now"
@@ -47,18 +42,19 @@ module Ledger
           **timespan_from_height(height: height),
           wanted_timespan: RETARGET_TIMESPAN,
           current_target: CCL::Pow::Utils.calculate_target(
-            from: Ledger::Repo.blocks[previous_hash].as(Model::Block::Pow).nbits
+            from: Ledger::Repo.blocks[tip_hash].as(Model::Block::Pow).nbits
           )
         )
       else # last blocks difficulty
-        difficulty = Ledger::Repo.blocks[previous_hash].as(Model::Block::Pow).nbits
+        difficulty = Ledger::Repo.blocks[tip_hash].as(Model::Block::Pow).nbits
       end
 
       new_block = Ledger::Model::Block::Pow.new(
         height: height,
         transactions: transactions,
-        previous_hash: previous_hash,
-        nbits: difficulty
+        previous_hash: tip_hash,
+        nbits: difficulty,
+        coinbase: Block::Coinbase.new(Node.settings.port.to_s)
       )
 
       if Ledger::Repo.save(block: new_block)
@@ -84,10 +80,21 @@ module Ledger
         end_time:   last_block.timestamp.to_f64,
       }
     end
+
+    private def genesis_transactions : Array(Ledger::Model::Transaction)
+      txns = [] of Ledger::Model::Transaction
+
+      txns << Ledger::Model::Transaction.new(
+        from: "Olivia",
+        to: "someone",
+        amount: 100000_u64
+      )
+    end
   end
 
   module Pos
     extend self
+    include Ledger::Model::Block
 
     def genesis : Nil
       Ledger::Repo.ledger.clear
@@ -100,8 +107,8 @@ module Ledger
         height: 0_u64,
         transactions: Array(Ledger::Model::Transaction).new,
         stakes: Array(Ledger::Model::Stake).new,
-        previous_hash: "Olivia",
-        miner: "3000"
+        previous_hash: Ledger::GENESIS_CREATOR,
+        coinbase: Coinbase.new("3000")
       )
 
       Ledger::Repo.blocks[genesis.hash] = genesis
@@ -115,20 +122,20 @@ module Ledger
       transactions : Array(Ledger::Model::Transaction),
       stakes : Array(Ledger::Model::Stake)
     ) : Nil
-      previous_hash = Ledger::Helper.probfin_previous_hash
-      height = Ledger::Repo.blocks[previous_hash].height + 1
+      tip_hash = Ledger::Util.probfin_tip_hash
+      height = Ledger::Repo.blocks[tip_hash].height + 1
 
       stakes << Ledger::Model::Stake.new(
         staker: Node.settings.port.to_s,
-        amount: 33_i64,
+        amount: 33_u64,
       )
 
       new_block = Ledger::Model::Block::Pos.new(
         height: height,
         transactions: transactions,
         stakes: stakes,
-        previous_hash: previous_hash,
-        miner: Node.settings.port.to_s,
+        previous_hash: tip_hash,
+        coinbase: Coinbase.new(Node.settings.port.to_s),
       )
 
       if Ledger::Repo.save(block: new_block)
@@ -150,7 +157,7 @@ module Ledger
       ProbFin.push(block: block.hash, parent: block.previous_hash)
       spawn { Messenger.broadcast to: "/blocks/pos", body: block.to_json }
       spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
-      remove_validator block.miner
+      remove_validator block.coinbase.miner
       add_stakers block.stakes
       new_block_if_leader
     end
@@ -171,7 +178,7 @@ module Ledger
     def new_block_if_leader
       if Node.settings.miner
         my_turn = CCL::Pos.naive_leader?(
-          seed: Ledger::Helper.probfin_previous_hash,
+          seed: Ledger::Util.probfin_tip_hash,
           validator_id: Node.settings.port.to_s
         )
         Cocol.logger.debug "MY_TURN: #{my_turn}"

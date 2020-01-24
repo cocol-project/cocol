@@ -1,13 +1,14 @@
 require "./spec_helper"
 
 describe "Ledger::Repo" do
+  let(:coinbase) { Ledger::Model::Block::Coinbase.new("3000") }
   let(:block_a) do
     Ledger::Model::Block::Pos.new(
       height: 0_u64,
       previous_hash: "Olivia",
       transactions: Array(Ledger::Model::Transaction).new,
       stakes: Array(Ledger::Model::Stake).new,
-      miner: "3000"
+      coinbase: coinbase
     )
   end
 
@@ -17,7 +18,7 @@ describe "Ledger::Repo" do
       previous_hash: block_a.hash,
       transactions: Array(Ledger::Model::Transaction).new,
       stakes: Array(Ledger::Model::Stake).new,
-      miner: "3000"
+      coinbase: coinbase
     )
   end
 

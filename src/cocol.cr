@@ -41,7 +41,6 @@ class Cocol::App
     cocol = Cocol::App.new
 
     Node.start(args: args, cocol: cocol) do
-      args = CLI::Argument.parse(ARGV)
       if args.miner?
         # spawn block_mining_loop
       end
