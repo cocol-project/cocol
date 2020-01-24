@@ -1,6 +1,7 @@
 # COCOL!
 
-![Stability Experimental](https://img.shields.io/badge/Stability-Experimental-orange.svg?style=flat-square) ![Crystal 0.27.2](https://img.shields.io/badge/Crystal-0.27.2-blue.svg?style=flat-square&link=https://crystal-lang.org&link=https://crystal-lang.org/api/0.27.2/) ![License MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-green.svg?style=flat-square) [![Build Status](https://travis-ci.org/cocol-project/cocol.svg?branch=master)](https://travis-ci.org/cocol-project/cocol)
+[![Build Status](https://img.shields.io/github/workflow/status/cocol-project/cocol/weekly)](https://github.com/cocol-project/cocol/actions) ![Stability Experimental](https://img.shields.io/badge/Stability-Experimental-orange.svg?style=flat-square) ![Crystal 0.27.2](https://img.shields.io/badge/Crystal-0.27.2-blue.svg?style=flat-square&link=https://crystal-lang.org&link=https://crystal-lang.org/api/0.27.2/) ![License MPL-2.0](https://img.shields.io/badge/License-MPL--2.0-green.svg?style=flat-square)
+
 
 ---
 
