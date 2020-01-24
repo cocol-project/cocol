@@ -1,5 +1,8 @@
 name: weekly
 on:
+  push:
+    branches: 
+      - master
   schedule:
     - cron: 0 1 * * 0
 
