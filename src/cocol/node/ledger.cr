@@ -7,6 +7,7 @@ module Ledger
 
   module Pow
     extend self
+    include Ledger::Model
 
     RETARGET_TIMESPAN = 60_f64 # In seconds (I think *g*)
 
@@ -22,7 +23,8 @@ module Ledger
         nonce: 2174333_u64,
         nbits: Ledger::Model::Block::Pow::MIN_NBITS,
         previous_hash: Ledger::GENESIS_CREATOR,
-        transactions: Array(Ledger::Model::Transaction).new
+        transactions: genesis_transactions,
+        coinbase: Block::Coinbase.new("Olivia")
       )
 
       Ledger::Repo.blocks[genesis.hash] = genesis
@@ -51,7 +53,8 @@ module Ledger
         height: height,
         transactions: transactions,
         previous_hash: tip_hash,
-        nbits: difficulty
+        nbits: difficulty,
+        coinbase: Block::Coinbase.new(Node.settings.port.to_s)
       )
 
       if Ledger::Repo.save(block: new_block)
@@ -77,10 +80,21 @@ module Ledger
         end_time:   last_block.timestamp.to_f64,
       }
     end
+
+    private def genesis_transactions : Array(Ledger::Model::Transaction)
+      txns = [] of Ledger::Model::Transaction
+
+      txns << Ledger::Model::Transaction.new(
+        from: "Olivia",
+        to: "someone",
+        amount: 100000_u64
+      )
+    end
   end
 
   module Pos
     extend self
+    include Ledger::Model::Block
 
     def genesis : Nil
       Ledger::Repo.ledger.clear
@@ -94,7 +108,7 @@ module Ledger
         transactions: Array(Ledger::Model::Transaction).new,
         stakes: Array(Ledger::Model::Stake).new,
         previous_hash: Ledger::GENESIS_CREATOR,
-        miner: "3000"
+        coinbase: Coinbase.new("3000")
       )
 
       Ledger::Repo.blocks[genesis.hash] = genesis
@@ -121,7 +135,7 @@ module Ledger
         transactions: transactions,
         stakes: stakes,
         previous_hash: tip_hash,
-        miner: Node.settings.port.to_s,
+        coinbase: Coinbase.new(Node.settings.port.to_s),
       )
 
       if Ledger::Repo.save(block: new_block)
@@ -143,7 +157,7 @@ module Ledger
       ProbFin.push(block: block.hash, parent: block.previous_hash)
       spawn { Messenger.broadcast to: "/blocks/pos", body: block.to_json }
       spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
-      remove_validator block.miner
+      remove_validator block.coinbase.miner
       add_stakers block.stakes
       new_block_if_leader
     end

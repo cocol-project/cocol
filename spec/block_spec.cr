@@ -11,7 +11,8 @@ describe "Ledger::Model::Block" do
           height: height,
           transactions: Array(Ledger::Model::Transaction).new,
           previous_hash: previous_hash,
-          nbits: Ledger::Model::Block::Pow::MIN_NBITS
+          nbits: Ledger::Model::Block::Pow::MIN_NBITS,
+          coinbase: Ledger::Model::Block::Coinbase.new("3000")
         )
       end
 
@@ -47,7 +48,7 @@ describe "Ledger::Model::Block" do
           previous_hash: previous_hash,
           stakes: stakes,
           transactions: Array(Ledger::Model::Transaction).new,
-          miner: "3000"
+          coinbase: Ledger::Model::Block::Coinbase.new("3000")
         )
       end
 

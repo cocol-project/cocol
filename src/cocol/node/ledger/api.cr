@@ -1,4 +1,4 @@
-# ### Transactions
+# --- Transactions
 
 post "/transactions" do |env|
   begin
@@ -32,7 +32,7 @@ get "/transactions" do
   Ledger::Mempool.pending.to_json
 end
 
-# ## Blocks
+# --- Blocks
 
 post "/blocks/pow" do |env|
   begin
@@ -68,7 +68,7 @@ get "/blocks" do
   Ledger::Repo.blocks.values.to_json
 end
 
-# ## Ledger
+# --- Ledger
 
 get "/ledger" do
   Ledger::Repo.ledger.to_json

@@ -2,9 +2,9 @@ require "./spec_helper"
 
 describe "Ledger::Util" do
   describe "Balance" do
-    let(:miner) { "3000" }
     let(:nobody) { "nobody" }
     let(:myself) { "myself" }
+    let(:coinbase) { Ledger::Model::Block::Coinbase.new("3000") }
 
     let(:b0) do
       Ledger::Model::Block::Pos.new(
@@ -18,7 +18,7 @@ describe "Ledger::Util" do
             amount: 100_u64
           ),
         ],
-        miner: miner
+        coinbase: coinbase
       )
     end
     let(:b1) do
@@ -33,7 +33,7 @@ describe "Ledger::Util" do
             amount: 32_u64
           ),
         ],
-        miner: miner
+        coinbase: coinbase
       )
     end
     let(:b2) do
@@ -48,7 +48,7 @@ describe "Ledger::Util" do
             amount: 67_u64
           ),
         ],
-        miner: miner
+        coinbase: coinbase
       )
     end
 
