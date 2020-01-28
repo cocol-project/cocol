@@ -8,7 +8,7 @@ targets:
   cocol:
     main: src/cocol.cr
 
-crystal: 0.32.0
+crystal: 0.32.1
 
 dependencies:
   optarg:
@@ -25,6 +25,9 @@ dependencies:
   ccl-pos:
     github: cocol-project/ccl-pos
     branch: master
+  secp256k1:
+    github: q9f/secp256k1.cr
+    version: "~> 0.2"
 
 development_dependencies:
   minitest:

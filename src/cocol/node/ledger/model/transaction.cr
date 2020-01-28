@@ -1,6 +1,5 @@
 module Ledger::Model
   alias TxnHash = String
-  alias TxnHashSeed = String
 
   abstract struct AbstractTransaction
     include JSON::Serializable
