@@ -1,18 +1,18 @@
 require "./spec_helper"
 
-describe "Ledger::Model::Block" do
+describe "Ledger::Block" do
   let(:height) { 0_u64 }
   let(:previous_hash) { "Olivia" }
 
   describe "Pow" do
     describe "Generic block" do
       let(:block) do
-        Ledger::Model::Block::Pow.new(
+        Ledger::Block::Pow.new(
           height: height,
-          transactions: Array(Ledger::Model::Transaction).new,
+          transactions: Array(Ledger::Action::Transaction).new,
           previous_hash: previous_hash,
-          nbits: Ledger::Model::Block::Pow::MIN_NBITS,
-          coinbase: Ledger::Model::Block::Coinbase.new("3000")
+          nbits: Ledger::Block::Pow::MIN_NBITS,
+          coinbase: Ledger::Block::Coinbase.new("3000")
         )
       end
 
@@ -31,11 +31,11 @@ describe "Ledger::Model::Block" do
       let(:nodes) { %w(4001 4002) }
       let(:stakes) do
         [
-          Ledger::Model::Stake.new(
+          Ledger::Action::Stake.new(
             staker: nodes[0],
             amount: 50_u64
           ),
-          Ledger::Model::Stake.new(
+          Ledger::Action::Stake.new(
             staker: nodes[1],
             amount: 50_u64
           ),
@@ -43,12 +43,12 @@ describe "Ledger::Model::Block" do
       end
 
       let(:block) do
-        Ledger::Model::Block::Pos.new(
+        Ledger::Block::Pos.new(
           height: height,
           previous_hash: previous_hash,
           stakes: stakes,
-          transactions: Array(Ledger::Model::Transaction).new,
-          coinbase: Ledger::Model::Block::Coinbase.new("3000")
+          transactions: Array(Ledger::Action::Transaction).new,
+          coinbase: Ledger::Block::Coinbase.new("3000")
         )
       end
 

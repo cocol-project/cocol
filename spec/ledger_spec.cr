@@ -10,8 +10,8 @@ describe Ledger::Pow do
 
   describe "Mine" do
     it "mines a block" do
-      transactions = Array(Ledger::Model::Transaction).new
-      txn = Ledger::Model::Transaction.new(
+      transactions = Array(Ledger::Action::Transaction).new
+      txn = Ledger::Action::Transaction.new(
         from: "me",
         to: "you",
         amount: 1_u64

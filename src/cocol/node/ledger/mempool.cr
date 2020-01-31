@@ -1,10 +1,10 @@
-require "./model/**"
+require "./action"
 
 module Ledger
   module Mempool
     extend self
 
-    include Ledger::Model
+    include Ledger::Action
 
     alias TxnHash = String
 

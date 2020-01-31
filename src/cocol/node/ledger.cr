@@ -1,4 +1,9 @@
-require "./ledger/**"
+require "./ledger/util"
+require "./ledger/block"
+require "./ledger/action"
+require "./ledger/mempool"
+require "./ledger/repo"
+require "./ledger/api"
 require "./event"
 require "./messenger"
 
@@ -7,7 +12,8 @@ module Ledger
 
   module Pow
     extend self
-    include Ledger::Model
+    include Ledger::Block
+    include Ledger::Action
 
     RETARGET_TIMESPAN = 60_f64 # In seconds (I think *g*)
 
@@ -16,12 +22,12 @@ module Ledger
       Ledger::Repo.blocks.clear
       Ledger::Repo.block_at_height.clear
 
-      genesis = Ledger::Model::Block::Pow.new(
+      genesis = Ledger::Block::Pow.new(
         hash: "00000f33293fc3092f436fec6480ba8460589087f2118c1c2d4a60f35372f297",
         timestamp: 1449966000_i64,
         height: 0_u64,
         nonce: 2174333_u64,
-        nbits: Ledger::Model::Block::Pow::MIN_NBITS,
+        nbits: Ledger::Block::Pow::MIN_NBITS,
         previous_hash: Ledger::GENESIS_CREATOR,
         transactions: genesis_transactions,
         coinbase: Block::Coinbase.new("Olivia")
@@ -32,7 +38,7 @@ module Ledger
       ProbFin.push(block: genesis.hash, parent: genesis.previous_hash)
     end
 
-    def mine(transactions : Array(Ledger::Model::Transaction)) : Ledger::Model::Block::Pow
+    def mine(transactions : Array(Ledger::Action::Transaction)) : Ledger::Block::Pow
       tip_hash = Ledger::Util.probfin_tip_hash
       height = Ledger::Repo.blocks[tip_hash].height + 1
 
@@ -42,14 +48,14 @@ module Ledger
           **timespan_from_height(height: height),
           wanted_timespan: RETARGET_TIMESPAN,
           current_target: CCL::Pow::Utils.calculate_target(
-            from: Ledger::Repo.blocks[tip_hash].as(Model::Block::Pow).nbits
+            from: Ledger::Repo.blocks[tip_hash].as(Block::Pow).nbits
           )
         )
       else # last blocks difficulty
-        difficulty = Ledger::Repo.blocks[tip_hash].as(Model::Block::Pow).nbits
+        difficulty = Ledger::Repo.blocks[tip_hash].as(Block::Pow).nbits
       end
 
-      new_block = Ledger::Model::Block::Pow.new(
+      new_block = Ledger::Block::Pow.new(
         height: height,
         transactions: transactions,
         previous_hash: tip_hash,
@@ -72,8 +78,8 @@ module Ledger
     end
 
     private def timespan_from_height(height : UInt64) : NamedTuple
-      first_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 20]].as(Model::Block::Pow)
-      last_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 1]].as(Model::Block::Pow)
+      first_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 20]].as(Block::Pow)
+      last_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 1]].as(Block::Pow)
 
       {
         start_time: first_block.timestamp.to_f64,
@@ -81,12 +87,12 @@ module Ledger
       }
     end
 
-    private def genesis_transactions : Array(Ledger::Model::Transaction)
-      txns = [] of Ledger::Model::Transaction
+    private def genesis_transactions : Array(Ledger::Action::Transaction)
+      txns = [] of Ledger::Action::Transaction
 
-      txns << Ledger::Model::Transaction.new(
+      txns << Ledger::Action::Transaction.new(
         from: "Olivia",
-        to: "someone",
+        to: "0x904F4094aeaadce2d46512BaeEc920977e90e7c9",
         amount: 100000_u64
       )
     end
@@ -94,19 +100,19 @@ module Ledger
 
   module Pos
     extend self
-    include Ledger::Model::Block
+    include Ledger::Block
 
     def genesis : Nil
       Ledger::Repo.ledger.clear
       Ledger::Repo.blocks.clear
       Ledger::Repo.block_at_height.clear
 
-      genesis = Ledger::Model::Block::Pos.new(
+      genesis = Ledger::Block::Pos.new(
         hash: "00000f33293fc3092f436fec6480ba8460589087f2118c1c2d4a60f35372f297",
         timestamp: 1449966000_i64,
         height: 0_u64,
-        transactions: Array(Ledger::Model::Transaction).new,
-        stakes: Array(Ledger::Model::Stake).new,
+        transactions: Array(Ledger::Action::Transaction).new,
+        stakes: Array(Ledger::Action::Stake).new,
         previous_hash: Ledger::GENESIS_CREATOR,
         coinbase: Coinbase.new("3000")
       )
@@ -119,18 +125,18 @@ module Ledger
     end
 
     def mine(
-      transactions : Array(Ledger::Model::Transaction),
-      stakes : Array(Ledger::Model::Stake)
+      transactions : Array(Ledger::Action::Transaction),
+      stakes : Array(Ledger::Action::Stake)
     ) : Nil
       tip_hash = Ledger::Util.probfin_tip_hash
       height = Ledger::Repo.blocks[tip_hash].height + 1
 
-      stakes << Ledger::Model::Stake.new(
+      stakes << Ledger::Action::Stake.new(
         staker: Node.settings.port.to_s,
         amount: 33_u64,
       )
 
-      new_block = Ledger::Model::Block::Pos.new(
+      new_block = Ledger::Block::Pos.new(
         height: height,
         transactions: transactions,
         stakes: stakes,
@@ -145,7 +151,7 @@ module Ledger
       end
     end
 
-    def validate(block : Ledger::Model::Block::Pos) : Nil
+    def validate(block : Ledger::Block::Pos) : Nil
       if Ledger::Repo.save(block: block)
         Cocol.logger.debug "BLOCK Height: #{block.height} | Saved: #{block.hash[-7..-1]}"
         on_save block
@@ -162,7 +168,7 @@ module Ledger
       new_block_if_leader
     end
 
-    def add_stakers(stakes : Array(Ledger::Model::Stake)) : Nil
+    def add_stakers(stakes : Array(Ledger::Action::Stake)) : Nil
       stakes.each do |s|
         Cocol.logger.debug "VALIDATOR ADDED: #{s.staker}"
         CCL::Pos::ValidatorPool.add(id: s.staker, timestamp: s.timestamp)
@@ -194,7 +200,7 @@ module Ledger
         if (pending_transactions = Ledger::Mempool.pending.values).size >= threshold
           mining_transactions = pending_transactions
           Ledger::Mempool.remove(mining_transactions)
-          Ledger::Pos.mine(mining_transactions, Array(Ledger::Model::Stake).new)
+          Ledger::Pos.mine(mining_transactions, Array(Ledger::Action::Stake).new)
 
           break
         end
@@ -220,7 +226,7 @@ module Ledger
   #     json_ledger = JSON.parse(response.body)
 
   #     json_ledger.as_a.each do |json_block|
-  #       block = Ledger::Model::Block.from_json(json_block.to_json)
+  #       block = Ledger::Action::Block.from_json(json_block.to_json)
   #       Ledger::Repo.blocks[block.hash] = block
   #       Ledger::Repo.establish(block.hash, block.height)
   #     end

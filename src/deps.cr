@@ -12,6 +12,7 @@ require "http/client"
 require "ccl-pow"
 require "probfin"
 require "ccl-pos"
+require "secp256k1"
 
 require "./cocol/cli/argument"
 require "./cocol/node/settings"

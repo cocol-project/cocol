@@ -2,7 +2,7 @@
 
 post "/transactions" do |env|
   begin
-    new_txn = Ledger::Model::Transaction.from_json(
+    new_txn = Ledger::Action::Transaction.from_json(
       env.request.body.not_nil!)
   rescue
     halt(
@@ -25,7 +25,11 @@ post "/transactions" do |env|
     end
   end
 
-  new_txn.to_json
+  new_txn.hash
+end
+
+get "/transactions/:hash" do |env|
+  Ledger::Mempool.pending[env.params.url["hash"]].to_json
 end
 
 get "/transactions" do
@@ -36,7 +40,7 @@ end
 
 post "/blocks/pow" do |env|
   begin
-    new_block = Ledger::Model::Block::Pow.from_json(
+    new_block = Ledger::Block::Pow.from_json(
       env.request.body.not_nil!)
   rescue
     halt(
@@ -59,7 +63,7 @@ post "/blocks/pow" do |env|
 end
 
 post "/blocks/pos" do |env|
-  new_block = Ledger::Model::Block::Pos.from_json(
+  new_block = Ledger::Block::Pos.from_json(
     env.request.body.not_nil!)
   Ledger::Pos.validate new_block
 end

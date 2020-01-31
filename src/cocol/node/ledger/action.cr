@@ -1,8 +1,25 @@
-module Ledger::Model
+module Ledger::Action
   alias TxnHash = String
 
-  abstract struct AbstractTransaction
+  struct Signature
     include JSON::Serializable
+
+    getter v : String
+    getter r : String
+    getter s : String
+
+    def initialize(@v, @r, @s)
+    end
+  end
+
+  abstract struct Abstract
+    include JSON::Serializable
+
+    getter hash : TxnHash
+    getter amount : UInt64
+    getter timestamp : Int64
+    @[JSON::Field(emit_null: true)]
+    property sig : Signature?
 
     private def calc_hash(*seed) : TxnHash
       sha = OpenSSL::Digest.new("SHA256")
@@ -11,12 +28,9 @@ module Ledger::Model
     end
   end
 
-  struct Transaction < AbstractTransaction
+  struct Transaction < Abstract
     getter from : String
     getter to : String
-    getter amount : UInt64
-    getter hash : TxnHash
-    getter timestamp : Int64
 
     def initialize(@from, @to, @amount)
       @timestamp = Time.utc.to_unix
@@ -24,11 +38,8 @@ module Ledger::Model
     end
   end
 
-  struct Stake < AbstractTransaction
+  struct Stake < Abstract
     getter staker : String
-    getter amount : UInt64
-    getter hash : TxnHash
-    getter timestamp : Int64
 
     def initialize(@staker, @amount)
       @timestamp = Time.utc.to_unix
