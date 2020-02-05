@@ -1,11 +1,11 @@
+require "./block"
+
 module Ledger
   module Repo
     extend self
 
-    include Ledger::Model
-
     alias BlockHash = String
-    alias Block = (Model::Block::Pow | Model::Block::Pos)
+    alias Block = (Ledger::Block::Pow | Ledger::Block::Pos)
 
     def blocks
       @@blocks ||= Hash(BlockHash, Block).new

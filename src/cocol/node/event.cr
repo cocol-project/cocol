@@ -43,7 +43,7 @@ module Event
 
   def transaction(
     event : EventType,
-    transaction : Ledger::Model::Transaction
+    transaction : Ledger::Action::Transaction
   ) : TransactionEvent
     {
       event:  event,
@@ -61,7 +61,7 @@ module Event
   end
 
   def block(
-    block : Ledger::Model::Block::Base
+    block : Ledger::Block::Base
   ) : NewBlockEvent
     {
       event:         "onNewBlock",
