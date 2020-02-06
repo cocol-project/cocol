@@ -1,5 +1,8 @@
-# --- Transactions
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at # http://mozilla.org/MPL/2.0/
 
+# --- Transactions
 post "/transactions" do |env|
   begin
     new_txn = Ledger::Action::Transaction.from_json(
@@ -37,7 +40,6 @@ get "/transactions" do
 end
 
 # --- Blocks
-
 post "/blocks/pow" do |env|
   begin
     new_block = Ledger::Block::Pow.from_json(
@@ -49,6 +51,11 @@ post "/blocks/pow" do |env|
       response: "Bad Request"
     )
   end
+  halt(
+    env,
+    status_code: 422,
+    response: "Invalid Block"
+  ) if !Ledger::Pow.valid?(block: new_block)
 
   if Ledger::Repo.save(block: new_block)
     if Node.settings.port > 4000
@@ -63,8 +70,22 @@ post "/blocks/pow" do |env|
 end
 
 post "/blocks/pos" do |env|
-  new_block = Ledger::Block::Pos.from_json(
-    env.request.body.not_nil!)
+  begin
+    new_block = Ledger::Block::Pos.from_json(
+      env.request.body.not_nil!)
+  rescue
+    halt(
+      env,
+      status_code: 400,
+      response: "Bad Request"
+    )
+  end
+  halt(
+    env,
+    status_code: 422,
+    response: "Invalid Block"
+  ) if !Ledger::Pos.valid?(block: new_block)
+
   Ledger::Pos.validate new_block
 end
 
@@ -73,7 +94,6 @@ get "/blocks" do
 end
 
 # --- Ledger
-
 get "/ledger" do
   Ledger::Repo.ledger.to_json
 end
