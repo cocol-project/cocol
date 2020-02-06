@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at # http://mozilla.org/MPL/2.0/
+
 require "./action"
 
 module Ledger::Block
@@ -15,7 +19,7 @@ module Ledger::Block
     end
   end
 
-  abstract struct Base
+  abstract struct Abstract
     include JSON::Serializable
     include Ledger::Action
 
@@ -26,11 +30,11 @@ module Ledger::Block
     getter coinbase : Coinbase
     getter transactions : Array(Transaction)
 
-    private abstract def hash_seed : BlockHashSeed
-    private abstract def calc_hash
+    abstract def hash_seed : BlockHashSeed
+    abstract def calc_hash
   end
 
-  struct Pos < Base
+  struct Pos < Abstract
     getter stakes : Array(Stake)
 
     def initialize(@hash,
@@ -51,19 +55,19 @@ module Ledger::Block
       @hash = calc_hash
     end
 
-    private def hash_seed : BlockHashSeed
+    def hash_seed : BlockHashSeed
       transactions = @transactions.map { |txn| txn.hash }.join("")
       "#{@height}#{@timestamp}#{transactions}#{@previous_hash}#{@coinbase}"
     end
 
-    private def calc_hash
+    def calc_hash
       sha256 = OpenSSL::Digest.new("SHA256")
-      sha256.update(hash_seed())
+      sha256.update(hash_seed)
       sha256.hexdigest
     end
   end
 
-  struct Pow < Base
+  struct Pow < Abstract
     MIN_NBITS = "20000010"
     getter nonce : UInt64
     getter nbits : String
@@ -90,12 +94,12 @@ module Ledger::Block
       @nonce = pow.nonce
     end
 
-    private def hash_seed : BlockHashSeed
+    def hash_seed : BlockHashSeed
       transactions = @transactions.map { |txn| txn.hash }.join("")
       "#{@height}#{@timestamp}#{transactions}#{@previous_hash}#{@coinbase}"
     end
 
-    private def calc_hash
+    def calc_hash
       CCL::Pow.mine(difficulty: @nbits, for: hash_seed())
     end
   end

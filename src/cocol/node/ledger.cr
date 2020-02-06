@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at # http://mozilla.org/MPL/2.0/
+
 require "./ledger/util"
 require "./ledger/block"
 require "./ledger/action"
@@ -77,6 +81,13 @@ module Ledger
       new_block
     end
 
+    def valid?(block : Ledger::Block::Abstract) : Bool
+      sha = OpenSSL::Digest.new("SHA256")
+      sha.update("#{block.nonce}#{block.hash_seed}")
+
+      block.hash == sha.hexdigest
+    end
+
     private def timespan_from_height(height : UInt64) : NamedTuple
       first_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 20]].as(Block::Pow)
       last_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 1]].as(Block::Pow)
@@ -149,6 +160,10 @@ module Ledger
         spawn Event.broadcast(Event.block(new_block).to_json)
         on_save new_block
       end
+    end
+
+    def valid?(block : Ledger::Block::Pos) : Bool
+      block.hash == block.calc_hash
     end
 
     def validate(block : Ledger::Block::Pos) : Nil

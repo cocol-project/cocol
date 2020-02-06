@@ -61,7 +61,7 @@ module Event
   end
 
   def block(
-    block : Ledger::Block::Base
+    block : Ledger::Block::Abstract
   ) : NewBlockEvent
     {
       event:         "onNewBlock",
