@@ -36,6 +36,10 @@ shards:
     github: drujensen/optarg
     version: 0.7.0
 
+  popcorn:
+    github: icyleaf/popcorn
+    version: 0.2.2
+
   probfin:
     github: cocol-project/probfin
     version: 0.2.1
@@ -50,7 +54,7 @@ shards:
 
   secp256k1:
     github: q9f/secp256k1.cr
-    version: 0.2.2
+    version: 0.3.1
 
   sha3:
     github: OscarBarrett/crystal-sha3
@@ -59,4 +63,8 @@ shards:
   string_inflection:
     github: mosop/string_inflection
     version: 0.2.1
+
+  totem:
+    github: icyleaf/totem
+    version: 0.6.0
 

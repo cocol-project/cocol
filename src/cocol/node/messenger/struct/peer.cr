@@ -2,12 +2,11 @@ module Messenger::Struct
   struct Peer
     include JSON::Serializable
 
-    @[JSON::Field(default: "localhost")]
+    property ident : UUID?
     property ip_addr : String
+    property port : UInt32
 
-    property handshake : Messenger::Struct::Handshake
-
-    def initialize(@handshake, @ip_addr = "localhost")
+    def initialize(@ident, @port, @ip_addr)
     end
   end
 end

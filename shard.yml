@@ -28,6 +28,8 @@ dependencies:
   secp256k1:
     github: q9f/secp256k1.cr
     version: "~> 0.2"
+  totem:
+    github: icyleaf/totem
 
 development_dependencies:
   minitest:

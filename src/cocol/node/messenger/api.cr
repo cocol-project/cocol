@@ -1,48 +1,39 @@
 get "/peers" do |_env|
-  Messenger::Repo.peers.map { |peer|
-    {
-      ip_addr:   "localhost",
-      handshake: {
-        ident: peer.handshake.ident,
-        port:  peer.handshake.port,
-      },
-    }
-  }.to_json
+  Messenger::Repo.peers.to_json
 end
 
 post "/peers" do |env|
-  peer = Messenger::Struct::Peer.new(
-    Messenger::Struct::Handshake.new(
-      ident: UUID.new(env.params.json["ident"].as(String)),
-      port: env.params.json["port"].as(Int64).to_i32
-    )
-  )
+  halt(
+    env,
+    status_code: 429,
+    response: "Too Many Requests"
+  ) if Messenger.connections_free <= 0
 
-  # TODO: more like if Messenger.accepts_connection?(from: peer)
-  if Messenger.connections_free > 0
-    Messenger::Repo.peers << peer
-    spawn Event.broadcast(Event.peer(peer).to_json)
-    env.response.status_code = 200
-  else
-    env.response.status_code = 202
+  begin
+    new_peer = Messenger::Struct::Peer.from_json(
+        env.request.body.not_nil!)
+  rescue
+    halt(
+      env,
+      status_code: 400,
+      response: "Bad Request"
+    )
   end
+
+  spawn Event.broadcast(Event.peer(peer).to_json)
+  Messenger::Repo.peers << new_peer
+
+  new_peer.ident.to_s
 end
 
 get "/known-peers" do |_env|
-  Messenger::Repo.known_peers.map { |peer|
-    {
-      ip_addr:   "localhost",
-      handshake: {
-        ident: peer.handshake.ident,
-        port:  peer.handshake.port,
-      },
-    }
-  }.to_json
+  Messenger::Repo.known_peers.to_json
 end
 
-post "/internal/handshake/:port" do |env|
+post "/internal/handshake/:ip_addr/:port" do |env|
+  target_ip_addr = env.params.url["ip_addr"]
   target_port = env.params.url["port"].to_i32
-  client = HTTP::Client.new("localhost", target_port)
+  client = HTTP::Client.new(target_ip_addr, target_port)
   Messenger.handshake(client)
   client.close
 end

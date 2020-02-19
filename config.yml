@@ -1,5 +1,5 @@
 master:
-  host: localhost
+  ip_addr: localhost
   port: 3000
 
 node:
