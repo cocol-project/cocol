@@ -3,10 +3,10 @@ module Messenger::Struct
     include JSON::Serializable
 
     property ident : UUID?
-    property ip_addr : String
+    property host : String
     property port : UInt32
 
-    def initialize(@ident, @port, @ip_addr)
+    def initialize(@ident, @port, @host)
     end
   end
 end

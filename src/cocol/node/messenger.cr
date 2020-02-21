@@ -7,7 +7,7 @@ module Messenger
     def initialize(from peer : Messenger::Struct::Peer) : URI
       URI.new(
         scheme: "http",
-        host: peer.ip_addr,
+        host: peer.host,
         port: peer.port
       )
     end
@@ -17,7 +17,7 @@ module Messenger
     module Base
       extend self
 
-      def broadcast(to endpoint : String, payload : String) : Void
+      def broadcast(to endpoint : String, body : String) : Void
         Messenger::Repo.peers.each do |peer|
           peer_uri = Messenger::PeerURI.new(peer)
           post(to: peer_uri, body: payload)
@@ -56,6 +56,17 @@ module Messenger
           Cocol.logger.warn "Peer is not responding at GET-#{uri}"
         end
         client.close
+      end
+    end
+
+    module PropagateTransaction
+      include Base
+      extend self
+
+      PATH = "/transactions"
+
+      def call(payload : Ledger::Action::Transaction)
+        broadcast to: PATH, body: payload.to_json
       end
     end
 

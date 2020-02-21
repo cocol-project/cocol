@@ -11,9 +11,9 @@ targets:
 crystal: 0.32.1
 
 dependencies:
-  optarg:
-   github: drujensen/optarg
-   version: ~> 0.7.0
+  commander:
+    github: mrrooijen/commander
+    version: ~> 0.3.5
   kemal:
     github: kemalcr/kemal
     version: ~> 0.26.0
@@ -30,6 +30,8 @@ dependencies:
     version: "~> 0.2"
   totem:
     github: icyleaf/totem
+  habitat:
+    github: luckyframework/habitat
 
 development_dependencies:
   minitest:

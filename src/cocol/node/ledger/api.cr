@@ -21,7 +21,7 @@ post "/transactions" do |env|
   ) if !Ledger::Util.valid?(transaction: new_txn)
 
   if Ledger::Mempool.add(new_txn)
-    spawn { Messenger.broadcast to: "/transactions", body: new_txn.to_json }
+    spawn { Messenger::Action::PropagateTransaction.call(new_txn) }
 
     if Node.settings.miner
       spawn Event.broadcast(Event.transaction("onTxn", new_txn).to_json)

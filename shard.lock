@@ -1,9 +1,5 @@
 version: 1.0
 shards:
-  callback:
-    github: drujensen/callback
-    version: 0.7.1
-
   ccl-pos:
     github: cocol-project/ccl-pos
     commit: 23812ffb3550e76912e8e981606f67b6570779ab
@@ -12,9 +8,17 @@ shards:
     github: cocol-project/ccl-pow
     commit: f9fb5943039e24438cdf00654cad3ef6818417cd
 
+  commander:
+    github: mrrooijen/commander
+    version: 0.3.5
+
   exception_page:
     github: crystal-loot/exception_page
     version: 0.1.2
+
+  habitat:
+    github: luckyframework/habitat
+    version: 0.4.3
 
   icr:
     github: crystal-community/icr
@@ -31,10 +35,6 @@ shards:
   minitest:
     github: ysbaddaden/minitest.cr
     version: 0.5.0
-
-  optarg:
-    github: drujensen/optarg
-    version: 0.7.0
 
   popcorn:
     github: icyleaf/popcorn
@@ -59,10 +59,6 @@ shards:
   sha3:
     github: OscarBarrett/crystal-sha3
     version: 0.3.2
-
-  string_inflection:
-    github: mosop/string_inflection
-    version: 0.2.1
 
   totem:
     github: icyleaf/totem

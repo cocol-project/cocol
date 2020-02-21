@@ -1,18 +1,18 @@
 module Node
   class Settings
     getter ident : UUID
-    property port : Int32
-    property max_connections : Int32
-    property miner : Bool
-    property master : Bool
-    property ip_addr : String
+    property host : String?
+    property port : Int32?
+    property max_connections : Int32?
+    property miner : Bool = false
+    property master : Bool = false
 
     def initialize
       @ident = UUID.random
     end
 
     def peer_info
-      {ip_addr: @ip_addr, port: @port, ident: @ident}
+      {host: @host, port: @port, ident: @ident}
     end
   end
 
