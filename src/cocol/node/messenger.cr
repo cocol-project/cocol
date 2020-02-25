@@ -3,59 +3,64 @@ require "./messenger/**"
 module Messenger
   extend self
 
-  class PeerURI
-    def initialize(from peer : Messenger::Struct::Peer) : URI
-      URI.new(
-        scheme: "http",
-        host: peer.host,
-        port: peer.port
-      )
-    end
-  end
-
   module Action
     module Base
       extend self
 
       def broadcast(to endpoint : String, body : String) : Void
         Messenger::Repo.peers.each do |peer|
-          peer_uri = Messenger::PeerURI.new(peer)
-          post(to: peer_uri, body: payload)
+          uri = peer_uri(from: peer)
+          uri.path = endpoint
+          post(to: uri, body: body)
         end
       end
 
       def post(
         to uri : URI,
         body : String
-      ) : HTTP::Client::Response
+      ) : HTTP::Client::Response | Nil
         client = HTTP::Client.new(uri)
         begin
-          client.post(
+          response = client.post(
+            path: uri.path,
             headers: HTTP::Headers{
               "Content-Type" => "application/json",
               "X-Node-Id"    => Node.settings.ident.to_s,
             },
-            body: body
+            body: body.to_json
           )
+          client.close
+          response
         rescue
           Cocol.logger.warn "Peer is not responding at POST-#{uri}"
+          nil
         end
-        client.close
       end
 
-      def get(from uri : URI) : HTTP::Client::Response
+      def get(from uri : URI) : HTTP::Client::Response | Nil
         client = HTTP::Client.new(uri)
         begin
-          client.get(
+          response = client.get(
+            path: uri.path,
             headers: HTTP::Headers{
               "Content-Type" => "application/json",
               "X-Node-Id"    => Node.settings.ident.to_s,
             }
           )
+          client.close
+          response
         rescue
           Cocol.logger.warn "Peer is not responding at GET-#{uri}"
+          nil
         end
-        client.close
+      end
+
+      def peer_uri(from peer : Messenger::Struct::Peer) : URI
+        URI.new(
+          scheme: "http",
+          host: peer.host,
+          port: peer.port.to_i32
+        )
       end
     end
 
@@ -76,9 +81,9 @@ module Messenger
 
       PATH = "/peers"
 
-      def call(peer : Messenger::Struct::Peer) : HTTP::Client::Reponse
-        payload = Messenger::Struct::Peer.new(Node.settings.peer_info)
-        uri = Messenger::PeerUri.new(from: peer)
+      def call(peer : Messenger::Struct::Peer) : HTTP::Client::Response | Nil
+        payload = Messenger::Struct::Peer.new(**Node.settings.peer_info)
+        uri = peer_uri(from: peer)
         uri.path = PATH
         post(to: uri, body: payload.to_json)
       end
@@ -91,9 +96,11 @@ module Messenger
       PATH = "/peers"
 
       def call(peer : Messenger::Struct::Peer) : Array(Messenger::Struct::Peer)
-        uri = Messenger::PeerURI.new from: peer
+        uri = peer_uri(from: peer)
         uri.path = PATH
-        response.body = get(from: uri)
+        response = get(from: uri)
+        # TODO: fixme, this is bad https://gph.is/2drwobJ
+        return Array(Messenger::Struct::Peer).new if response.nil?
         Array(Messenger::Struct::Peer).from_json(response.body)
       end
     end
@@ -113,19 +120,20 @@ module Messenger
     Messenger::Repo.known_peers.concat(peers)
 
     # now establish connection to peers if free slots are available
-    peers.sample(Messenger.free_slots) do |peer|
+    peers.sample(Messenger.free_slots).each do |peer|
       sleep 1
       next if Node.settings.ident == peer.ident
-      next if Messenger::Action::Handshake.call(peer).status_code != 200
+      next if (handshake = Messenger::Action::Handshake.call(peer)).nil?
+      next if handshake.status_code != 200
 
       Messenger::Repo.peers.add(peer)
     end
   end
 
 
-  def free_slots : Int32
+  def free_slots : UInt16
     free = Node.settings.max_connections - Messenger::Repo.peers.size
-    return 0 if free < 0
-    free
+    return 0_u16 if free < 0
+    free.to_u16
   end
 end

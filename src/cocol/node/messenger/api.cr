@@ -7,7 +7,7 @@ post "/peers" do |env|
     env,
     status_code: 429,
     response: "Too Many Requests"
-  ) if Messenger.connections_free <= 0
+  ) if Messenger.free_slots <= 0
 
   begin
     new_peer = Messenger::Struct::Peer.from_json(
@@ -20,7 +20,7 @@ post "/peers" do |env|
     )
   end
 
-  spawn Event.broadcast(Event.peer(peer).to_json)
+  spawn Event.broadcast(Event.peer(new_peer).to_json)
   Messenger::Repo.peers << new_peer
 
   new_peer.ident.to_s
@@ -30,10 +30,10 @@ get "/known-peers" do |_env|
   Messenger::Repo.known_peers.to_json
 end
 
-post "/internal/handshake/:ip_addr/:port" do |env|
-  target_ip_addr = env.params.url["ip_addr"]
-  target_port = env.params.url["port"].to_i32
-  client = HTTP::Client.new(target_ip_addr, target_port)
-  Messenger.handshake(client)
-  client.close
+post "/internal/handshake/:host/:port" do |env|
+  target_host = env.params.url["host"]
+  target_port = env.params.url["port"].to_u32
+
+  peer = Messenger::Struct::Peer.new(port: target_port, host: target_host)
+  Messenger::Action::Handshake.call(peer)
 end

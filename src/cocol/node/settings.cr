@@ -1,9 +1,9 @@
 module Node
   class Settings
     getter ident : UUID
-    property host : String?
-    property port : Int32?
-    property max_connections : Int32?
+    property host : String = "localhost"
+    property port : UInt32 = 3001_u32
+    property max_connections : UInt16 = 5_u16
     property miner : Bool = false
     property master : Bool = false
 

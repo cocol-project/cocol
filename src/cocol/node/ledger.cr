@@ -176,7 +176,7 @@ module Ledger
     def on_save(block)
       Ledger::Mempool.remove block.transactions
       ProbFin.push(block: block.hash, parent: block.previous_hash)
-      spawn { Messenger.broadcast to: "/blocks/pos", body: block.to_json }
+      spawn { Messenger::Action::Base.broadcast to: "/blocks/pos", body: block.to_json }
       spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
       remove_validator block.coinbase.miner
       add_stakers block.stakes

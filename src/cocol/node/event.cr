@@ -27,7 +27,7 @@ module Event
   def update(event : String) : NamedTuple
     update = {
       event: event,
-      peers: Messenger::Repo.peers.map { |peer| peer.handshake.port },
+      peers: Messenger::Repo.peers.map { |peer| peer.port },
       port:  Node.settings.port,
       miner: Node.settings.miner,
     }
@@ -56,7 +56,7 @@ module Event
     {
       event:     "onConnection",
       node_port: Node.settings.port,
-      peer_port: peer.handshake.port,
+      peer_port: peer.port,
     }
   end
 

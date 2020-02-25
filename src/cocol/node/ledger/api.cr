@@ -58,12 +58,10 @@ post "/blocks/pow" do |env|
   ) if !Ledger::Pow.valid?(block: new_block)
 
   if Ledger::Repo.save(block: new_block)
-    if Node.settings.port > 4000
-      Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
-    end
+    Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
     spawn do
       ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
-      Messenger.broadcast to: "/blocks", body: new_block.to_json
+      Messenger::Action::Base.broadcast to: "/blocks", body: new_block.to_json
       Event.broadcast(Event.update("onInitialUpdate").to_json)
     end
   end

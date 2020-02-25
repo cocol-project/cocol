@@ -5,7 +5,7 @@ module Cocol
     module Api
       extend self
 
-      def run(port : Int32)
+      def run(port : UInt32)
         before_all do |env|
           env.response.content_type = "application/json"
           env.response.headers["Allow"] = "HEAD,GET,PUT,POST,DELETE,OPTIONS"
@@ -15,7 +15,7 @@ module Cocol
         end
 
         logging false
-        Kemal.run(port: port, args: nil)
+        Kemal.run(port: port.to_i32, args: nil)
       end
     end
 
@@ -45,18 +45,16 @@ module Cocol
 
   module Command
     module Base
-      protected def run(options, &block)
-        Node.settings.host = options.bool["host"]?
-        Node.settings.port = options.int["port"]
-        Node.settings.max_connections = options.int["max_connections"]
-        Node.settings.miner = options.bool["miner"]
-        Node.settings.master = options.bool["master"]
+      protected def run(options)
+        Node.settings.host = options.string["host"] if options.string["host"]?
+        Node.settings.port = options.int["port"].to_u32 if options.int["port"]?
+        Node.settings.max_connections = options.int["max_connections"].to_u16 if options.int["max_connections"]?
+        Node.settings.miner = options.bool["miner"] if options.bool["miner"]?
+        Node.settings.master = options.bool["master"] if options.bool["master"]?
 
         Cocol::App::Api.run port: Node.settings.port
         Ledger::Pos.genesis
         Messenger.establish_network_position if !Node.settings.master
-
-        yield
       end
     end
 
@@ -74,7 +72,7 @@ module Cocol
       include Base
 
       def call(options)
-        if option.string["host"]?.presence.nil?
+        if options.string["host"]?.presence.nil?
           puts "When connecting to a public network you have to provide your host address"
           return
         end
@@ -88,7 +86,6 @@ end
 cli = Commander::Command.new do |client|
   client.use = "cocol"
   client.long = "Cocol Client - mininal blockchain testbed"
-
 
   client.commands.add do |pub|
     pub.use = "public"
@@ -135,7 +132,7 @@ cli = Commander::Command.new do |client|
       flag.default = false
     end
 
-    addr.run do |options, _arguments|
+    pub.run do |options, _arguments|
       Cocol::Command::Public.call(options)
     end
   end
@@ -172,7 +169,7 @@ cli = Commander::Command.new do |client|
     flag.default = false
   end
 
-  local.run do |options, _arguments|
+  client.run do |options, _arguments|
     Cocol::Command::Local.call(options)
   end
 end
