@@ -27,7 +27,7 @@ module Messenger
               "Content-Type" => "application/json",
               "X-Node-Id"    => Node.settings.ident.to_s,
             },
-            body: body.to_json
+            body: body
           )
           client.close
           response
@@ -129,7 +129,6 @@ module Messenger
       Messenger::Repo.peers.add(peer)
     end
   end
-
 
   def free_slots : UInt16
     free = Node.settings.max_connections - Messenger::Repo.peers.size

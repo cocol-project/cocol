@@ -11,7 +11,7 @@ post "/peers" do |env|
 
   begin
     new_peer = Messenger::Struct::Peer.from_json(
-        env.request.body.not_nil!)
+      env.request.body.not_nil!)
   rescue
     halt(
       env,

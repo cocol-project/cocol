@@ -72,7 +72,7 @@ module Ledger
         Ledger::Mempool.remove(transactions)
         ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
 
-        spawn { Messenger.broadcast to: "/blocks/pow", body: new_block.to_json }
+        spawn { Messenger::Action::Base.broadcast to: "/blocks/pow", body: new_block.to_json }
 
         spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
         spawn Event.broadcast(Event.block(new_block).to_json)
