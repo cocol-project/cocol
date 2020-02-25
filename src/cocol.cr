@@ -24,21 +24,17 @@ module Cocol
 
       # TODO: refactor me https://gph.is/1cO1G6K
       def run
-        threshold = 2
-        loop do
-          sleep 1
+        chan = Channel(Nil).new
+        pending_transactions = Ledger::Mempool.pending.values
 
-          pending_transactions_count = (
-            pending_transactions = Ledger::Mempool.pending.values
-          ).size
-
-          if pending_transactions_count >= threshold
-            Cocol.logger.info "[Node: #{Node.settings.port}] Mining triggered"
-            mining_transactions = pending_transactions
-            Ledger::Mempool.remove(mining_transactions)
-            Ledger::Pow.mine(mining_transactions)
-          end
+        spawn do
+          Ledger::Pow.mine(pending_transactions)
+          chan.send(nil)
         end
+
+        chan.receive
+        Ledger::Mempool.remove(pending_transactions)
+        Miner.run
       end
     end
   end
@@ -52,9 +48,14 @@ module Cocol
         Node.settings.miner = options.bool["miner"] if options.bool["miner"]?
         Node.settings.master = options.bool["master"] if options.bool["master"]?
 
-        Cocol::App::Api.run port: Node.settings.port
-        Ledger::Pos.genesis
+        Cocol.logger.info Node.settings.inspect
+
+        spawn { Cocol::App::Api.run port: Node.settings.port }
+        spawn { Cocol::App::Miner.run }
+        Ledger::Pow.genesis
         Messenger.establish_network_position if !Node.settings.master
+
+        sleep
       end
     end
 

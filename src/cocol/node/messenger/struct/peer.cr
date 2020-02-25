@@ -2,7 +2,7 @@ module Messenger::Struct
   struct Peer
     include JSON::Serializable
 
-    property ident : UUID?
+    property ident : String?
     property host : String
     property port : UInt32
 

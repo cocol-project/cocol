@@ -15,7 +15,10 @@ module Ledger::Block
     getter reward : UInt64
 
     def initialize(@miner)
-      @reward = 5_u64
+      @reward = 50_u64
+    end
+
+    def initialize(@miner, @reward)
     end
   end
 

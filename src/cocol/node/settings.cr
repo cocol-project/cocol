@@ -1,6 +1,6 @@
 module Node
   class Settings
-    getter ident : UUID
+    getter ident : String
     property host : String = "localhost"
     property port : UInt32 = 3001_u32
     property max_connections : UInt16 = 5_u16
@@ -8,7 +8,7 @@ module Node
     property master : Bool = false
 
     def initialize
-      @ident = UUID.random
+      @ident = Random::Secure.base64(6)
     end
 
     def peer_info
