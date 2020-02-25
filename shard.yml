@@ -30,8 +30,6 @@ dependencies:
     version: "~> 0.2"
   totem:
     github: icyleaf/totem
-  habitat:
-    github: luckyframework/habitat
 
 development_dependencies:
   minitest:

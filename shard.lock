@@ -14,15 +14,11 @@ shards:
 
   exception_page:
     github: crystal-loot/exception_page
-    version: 0.1.2
-
-  habitat:
-    github: luckyframework/habitat
-    version: 0.4.3
+    version: 0.1.4
 
   icr:
     github: crystal-community/icr
-    commit: 08c1f60e2f4b3b1fa662e19fce27748d136e2808
+    commit: 7da354f5c0a356aee77e68fc63c87e2ad35da7fb
 
   kemal:
     github: kemalcr/kemal
