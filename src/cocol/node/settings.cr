@@ -5,6 +5,7 @@ module Node
     property port : UInt32 = 3001_u32
     property max_connections : UInt16 = 5_u16
     property miner : Bool = false
+    property miner_address : String?
     property master : Bool = false
 
     def initialize

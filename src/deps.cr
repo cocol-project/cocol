@@ -8,7 +8,7 @@ require "http/web_socket"
 require "http/client"
 
 require "kemal"
-require "commander"
+require "clim"
 require "ccl-pow"
 require "probfin"
 require "ccl-pos"

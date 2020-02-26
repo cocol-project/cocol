@@ -11,9 +11,9 @@ targets:
 crystal: 0.33.0
 
 dependencies:
-  commander:
-    github: mrrooijen/commander
-    version: ~> 0.3.5
+  clim:
+    github: at-grandpa/clim
+    version: 0.10.0
   kemal:
     github: kemalcr/kemal
     version: ~> 0.26.0

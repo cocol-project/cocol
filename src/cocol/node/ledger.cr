@@ -64,7 +64,7 @@ module Ledger
         transactions: transactions,
         previous_hash: tip_hash,
         nbits: difficulty,
-        coinbase: Block::Coinbase.new(Node.settings.port.to_s)
+        coinbase: Block::Coinbase.new(miner: Node.settings.miner_address.as(String))
       )
 
       if Ledger::Repo.save(block: new_block)

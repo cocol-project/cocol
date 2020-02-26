@@ -39,140 +39,40 @@ module Cocol
     end
   end
 
-  module Command
-    module Base
-      protected def run(options)
-        Node.settings.host = options.string["host"] if options.string["host"]?
-        Node.settings.port = options.int["port"].to_u32 if options.int["port"]?
-        Node.settings.max_connections = options.int["max_connections"].to_u16 if options.int["max_connections"]?
-        Node.settings.miner = options.bool["miner"] if options.bool["miner"]?
-        Node.settings.master = options.bool["master"] if options.bool["master"]?
+  class Command < Clim
+    main do
+      desc "Cocol Client - minimal blockchain testbed"
+      usage "cocol [options] [arguments] ..."
+      version "Version 0.3.0"
+      option "-h HOST", "--host=HOST", type: String, desc: "Change host if running a public node (default localhost)"
+      option "-p NUMBER", "--port=NUMBER", type: UInt32, desc: "Change port (default 3001)"
+      option "-x NUMBER", "--max-connections=NUMBER", type: UInt16, desc: "Change max-connections (default 5)"
+      option "-M", "--miner", type: Bool, desc: "Start as miner (default false)"
+      option "-a", "--address=ADDRESS", type: String, desc: "Required for the block reward if started as miner"
+      option "-m", "--master", type: Bool, desc: "Start as master (default false)"
+      run do |opts, _args|
+        if opts.miner && !opts.address
+          puts "You need to pass an address for the block reward `--address`"
+          return
+        end
+        Node.settings.host = opts.host.as(String) if opts.host
+        Node.settings.port = opts.port.as(UInt32) if opts.port
+        Node.settings.max_connections = opts.max_connections.as(UInt16) if opts.max_connections
+        Node.settings.miner = opts.miner if opts.miner
+        Node.settings.miner_address = opts.address.as(String) if opts.address
+        Node.settings.master = opts.master if opts.master
 
         Cocol.logger.info Node.settings.inspect
 
         spawn { Cocol::App::Api.run port: Node.settings.port }
-        spawn { Cocol::App::Miner.run }
+        spawn { Cocol::App::Miner.run } if Node.settings.miner
         Ledger::Pow.genesis
         Messenger.establish_network_position if !Node.settings.master
 
         sleep
       end
     end
-
-    module Local
-      extend self
-      include Base
-
-      def call(options)
-        run(options)
-      end
-    end
-
-    module Public
-      extend self
-      include Base
-
-      def call(options)
-        if options.string["host"]?.presence.nil?
-          puts "When connecting to a public network you have to provide your host address"
-          return
-        end
-
-        run(options)
-      end
-    end
   end
 end
 
-cli = Commander::Command.new do |client|
-  client.use = "cocol"
-  client.long = "Cocol Client - mininal blockchain testbed"
-
-  client.commands.add do |pub|
-    pub.use = "public"
-    pub.short = "Connect to a public network"
-    pub.long = pub.short
-
-    pub.flags.add do |flag|
-      flag.name = "host"
-      flag.description = "Needed for public network"
-      flag.long = "--host"
-      flag.short = "-h"
-      flag.default = ""
-    end
-
-    pub.flags.add do |flag|
-      flag.name = "port"
-      flag.description = "Your pub's API port"
-      flag.long = "--port"
-      flag.short = "-p"
-      flag.default = 3001
-    end
-
-    pub.flags.add do |flag|
-      flag.name = "max-connection"
-      flag.description = "Max connections allowed to other nodes"
-      flag.long = "--max-connections"
-      flag.short = "-x"
-      flag.default = 5
-    end
-
-    pub.flags.add do |flag|
-      flag.name = "miner"
-      flag.description = "Passing this will make your client a miner"
-      flag.long = "--miner"
-      flag.short = "-M"
-      flag.default = false
-    end
-
-    pub.flags.add do |flag|
-      flag.name = "master"
-      flag.description = "Is your node a master node?"
-      flag.long = "--master"
-      flag.short = "-m"
-      flag.default = false
-    end
-
-    pub.run do |options, _arguments|
-      Cocol::Command::Public.call(options)
-    end
-  end
-
-  client.flags.add do |flag|
-    flag.name = "port"
-    flag.description = "Your client's API port"
-    flag.long = "--port"
-    flag.short = "-p"
-    flag.default = 3001
-  end
-
-  client.flags.add do |flag|
-    flag.name = "max-connection"
-    flag.description = "Max connections allowed to other nodes"
-    flag.long = "--max-connections"
-    flag.short = "-x"
-    flag.default = 5
-  end
-
-  client.flags.add do |flag|
-    flag.name = "miner"
-    flag.description = "Passing this will make your client a miner"
-    flag.long = "--miner"
-    flag.short = "-M"
-    flag.default = false
-  end
-
-  client.flags.add do |flag|
-    flag.name = "master"
-    flag.description = "Is your node a master node?"
-    flag.long = "--master"
-    flag.short = "-m"
-    flag.default = false
-  end
-
-  client.run do |options, _arguments|
-    Cocol::Command::Local.call(options)
-  end
-end
-
-Commander.run(cli, ARGV)
+Cocol::Command.start(ARGV)
