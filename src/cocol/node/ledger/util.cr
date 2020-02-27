@@ -43,7 +43,7 @@ module Ledger
       txn_sig = txn.sig.as(Ledger::Action::Signature)
       r = BigInt.new(txn_sig.r)
       s = BigInt.new(txn_sig.s)
-      sig = Secp256k1::ECDSA_Signature.new(r: r, s: s)
+      sig = Secp256k1::ECDSASignature.new(r: r, s: s)
       pubdc = Secp256k1::Util.decode_compressed_public_key(txn_sig.v)
       Secp256k1::Signature.verify(txn.hash, sig, pubdc)
     end

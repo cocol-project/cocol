@@ -5,7 +5,7 @@ module Cocol
     @@logger ||= Logger.new(
       STDOUT,
       level: Logger::DEBUG,
-      progname: Node.settings.port.to_s
+      progname: "#{Node.settings.ident}@#{Node.settings.host}:#{Node.settings.port}"
     )
   end
 end

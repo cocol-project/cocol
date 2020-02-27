@@ -1,13 +1,19 @@
 module Node
   class Settings
-    getter ident : UUID
-    property port : Int32 = 3000
-    property max_connections : Int32 = 20
+    getter ident : String
+    property host : String = "localhost"
+    property port : UInt32 = 3001_u32
+    property max_connections : UInt16 = 5_u16
     property miner : Bool = false
+    property miner_address : String?
     property master : Bool = false
 
     def initialize
-      @ident = UUID.random
+      @ident = Random::Secure.base64(6)
+    end
+
+    def peer_info
+      {host: @host, port: @port, ident: @ident}
     end
   end
 

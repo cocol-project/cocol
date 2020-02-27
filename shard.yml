@@ -1,5 +1,5 @@
 name: cocol
-version: v0.2.1
+version: v0.3.0
 
 authors:
   - Cristian Șerb <cserb@pm.me>
@@ -8,12 +8,12 @@ targets:
   cocol:
     main: src/cocol.cr
 
-crystal: 0.32.1
+crystal: 0.33.0
 
 dependencies:
-  optarg:
-   github: drujensen/optarg
-   version: ~> 0.7.0
+  clim:
+    github: at-grandpa/clim
+    version: 0.10.0
   kemal:
     github: kemalcr/kemal
     version: ~> 0.26.0
@@ -28,6 +28,8 @@ dependencies:
   secp256k1:
     github: q9f/secp256k1.cr
     version: "~> 0.2"
+  totem:
+    github: icyleaf/totem
 
 development_dependencies:
   minitest:

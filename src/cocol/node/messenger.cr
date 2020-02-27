@@ -3,75 +3,168 @@ require "./messenger/**"
 module Messenger
   extend self
 
-  def handshake(with client : HTTP::Client) : HTTP::Client::Response
-    client.post(
-      "/peers",
-      headers: HTTP::Headers{"Content-Type" => "application/json"},
-      body: Messenger::Struct::Handshake.new(
-        ident: Node.settings.ident,
-        port: Node.settings.port
-      ).to_json
-    )
+  module Action
+    module Base
+      extend self
+
+      def broadcast(to endpoint : String, body : String) : Void
+        Messenger::Repo.peers.each do |peer|
+          uri = peer_uri(from: peer)
+          uri.path = endpoint
+          post(to: uri, body: body)
+        end
+      end
+
+      def post(
+        to uri : URI,
+        body : String
+      ) : HTTP::Client::Response | Nil
+        client = HTTP::Client.new(uri)
+        begin
+          response = client.post(
+            path: uri.path,
+            headers: HTTP::Headers{
+              "Content-Type" => "application/json",
+              "X-Node-Id"    => Node.settings.ident.to_s,
+            },
+            body: body
+          )
+          client.close
+          response
+        rescue
+          Cocol.logger.warn "Peer is not responding at POST-#{uri}"
+          nil
+        end
+      end
+
+      def get(from uri : URI) : HTTP::Client::Response | Nil
+        client = HTTP::Client.new(uri)
+        begin
+          response = client.get(
+            path: uri.path,
+            headers: HTTP::Headers{
+              "Content-Type" => "application/json",
+              "X-Node-Id"    => Node.settings.ident.to_s,
+            }
+          )
+          client.close
+          response
+        rescue
+          Cocol.logger.warn "Peer is not responding at GET-#{uri}"
+          nil
+        end
+      end
+
+      def peer_uri(from peer : Messenger::Struct::Peer) : URI
+        URI.new(
+          scheme: "http",
+          host: peer.host,
+          port: peer.port.to_i32
+        )
+      end
+    end
+
+    module PropagateTransaction
+      include Base
+      extend self
+
+      PATH = "/transactions"
+
+      def call(payload : Ledger::Action::Transaction)
+        broadcast to: PATH, body: payload.to_json
+      end
+    end
+
+    module Handshake
+      include Base
+      extend self
+
+      PATH = "/peers"
+
+      def call(peer : Messenger::Struct::Peer) : HTTP::Client::Response | Nil
+        payload = Messenger::Struct::Peer.new(**Node.settings.peer_info)
+        uri = peer_uri(from: peer)
+        uri.path = PATH
+        post(to: uri, body: payload.to_json)
+      end
+    end
+
+    module GetPeers
+      include Base
+      extend self
+
+      PATH = "/peers"
+
+      def call(peer : Messenger::Struct::Peer) : Array(Messenger::Struct::Peer)
+        uri = peer_uri(from: peer)
+        uri.path = PATH
+        response = get(from: uri)
+        # TODO: fixme, this is bad https://gph.is/2drwobJ
+        return Array(Messenger::Struct::Peer).new if response.nil?
+        Array(Messenger::Struct::Peer).from_json(response.body)
+      end
+    end
+
+    module GetBlock
+      include Base
+      extend self
+
+      PATH = "/blocks/:hash"
+
+      def call(block_hash : String, peer : Messenger::Struct::Peer) : Ledger::Block::Pow
+        uri = peer_uri(from: peer)
+        uri.path = PATH.gsub(":hash", block_hash)
+        response = get(from: uri)
+        Cocol.logger.info response.pretty_inspect
+        Ledger::Block::Pow.from_json(response.as(HTTP::Client::Response).body)
+      end
+    end
+
+    module Inventory
+      extend self
+      include Base
+      include Ledger::Block
+
+      PATH = "/inventory/:best_hash"
+
+      def call(peer : Messenger::Struct::Peer, best_hash : BlockHash) : Array(BlockHash)
+        uri = peer_uri(from: peer)
+        uri.path = PATH.gsub(":best_hash", best_hash)
+        response = get(from: uri)
+
+        # Cocol.logger.info response.pretty_inspect
+        Array(BlockHash).from_json(response.as(HTTP::Client::Response).body)
+      end
+    end
   end
 
-  # This is more of an e2e test
   def establish_network_position
-    # TODO: totem broke with crystal 0.28.0
-    # config = Totem.from_file("/home/cris/Projects/crystal/cocol/config.yml")
-    # master = config.get("master").as_h
-    master = {"host" => "localhost", "port" => 3000}
+    config = Totem.from_file("./config.yml")
+    master = config.mapping(Messenger::Struct::Peer, "master")
 
-    master = HTTP::Client.new(master["host"].as(String), master["port"].as(Int32))
-    Messenger.handshake with: master
+    # make yourself known
+    Messenger::Action::Handshake.call peer: master
 
     # now get all peers master knows about
-    response = master.get "/peers"
-    peers = Array(Messenger::Struct::Peer).from_json(response.body)
-    # remove this node
-    peers = peers.reject! { |p| p.handshake.port == Node.settings.port }
+    peers = Messenger::Action::GetPeers.call(peer: master)
+    # remove yourself
+    peers = peers.reject! { |p| p.ident == Node.settings.ident }
     Messenger::Repo.known_peers.concat(peers)
 
     # now establish connection to peers if free slots are available
-    peers.sample(Messenger.connections_free).each do |peer|
-      sleep 2
-      idents = Messenger::Repo.peers.map { |_peer| _peer.handshake.ident }
-      unless idents.includes?(peer.handshake.ident) || Node.settings.ident == peer.handshake.ident
-        client = HTTP::Client.new(peer.ip_addr, peer.handshake.port)
-        response = Messenger.handshake with: client
+    peers.sample(Messenger.free_slots).each do |peer|
+      sleep 1
+      next if Node.settings.ident == peer.ident
+      next if (handshake = Messenger::Action::Handshake.call(peer)).nil?
+      next if handshake.status_code != 200
 
-        case response.status_code
-        when 200
-          Messenger::Repo.peers << peer
-        end
-        client.close
-      end
-    end
-
-    master.close
-  end
-
-  def broadcast(to endpoint : String, body : String) : Void
-    Messenger::Repo.peers.each do |peer|
-      client = HTTP::Client.new(peer.ip_addr, peer.handshake.port)
-      begin
-        client.post(
-          endpoint,
-          headers: HTTP::Headers{
-            "Content-Type" => "application/json",
-            "X-Node-Id"    => Node.settings.port.to_s,
-          },
-          body: body
-        )
-      rescue
-        Cocol.logger.warn "Peer #{peer.handshake.port} is not responding"
-      end
-      client.close
+      Messenger::Repo.peers.add(peer)
     end
   end
 
-  def connections_free : Int32
+  def free_slots : UInt16
     free = Node.settings.max_connections - Messenger::Repo.peers.size
-    return 0 if free < 0
-    free
+    return 0_u16 if free < 0
+    free.to_u16
   end
 end

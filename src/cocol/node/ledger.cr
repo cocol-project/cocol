@@ -14,6 +14,56 @@ require "./messenger"
 module Ledger
   GENESIS_CREATOR = "Olivia"
 
+  module Inventory
+    extend self
+    include Ledger::Block
+
+    def call(best_hash : BlockHash) : Array(BlockHash)
+      peer_best_block = Ledger::Repo.blocks[best_hash]?
+      return Array(BlockHash).new if peer_best_block.nil?
+
+      Ledger::Repo.blocks.map do |k, v|
+        k if v.height > peer_best_block.height
+      end.compact
+    end
+  end
+
+  module Sync
+    extend self
+    include Ledger::Block
+
+    def call
+      Cocol.logger.info "--- START SYNC"
+      loop do
+        sleep 0.5
+        # Cocol.logger.info "--- BEFORE NEXT"
+        next if Messenger::Repo.peers.size == 0
+
+        peer = Messenger::Repo.peers.first
+        inventory = Messenger::Action::Inventory.call(
+          peer: peer,
+          best_hash: Ledger::Util.probfin_tip_hash
+        )
+        # Cocol.logger.info "--- BEFORE BREAK"
+        break if inventory.size == 0
+        # Cocol.logger.info "--- AFTER BREAK"
+
+        inventory.each do |bh|
+          block = Messenger::Action::GetBlock.call(block_hash: bh, peer: peer)
+          next if !Ledger::Pow.valid?(block: block)
+
+          if Ledger::Repo.save(block: block)
+            Cocol.logger.info "SYNCED -- Height: #{block.height} Hash: #{block.hash}"
+            ProbFin.push(block: block.hash, parent: block.previous_hash)
+          end
+        end
+
+        break
+      end
+      Cocol.logger.info "--- SYNC FINISHED"
+    end
+  end
+
   module Pow
     extend self
     include Ledger::Block
@@ -27,14 +77,14 @@ module Ledger
       Ledger::Repo.block_at_height.clear
 
       genesis = Ledger::Block::Pow.new(
-        hash: "00000f33293fc3092f436fec6480ba8460589087f2118c1c2d4a60f35372f297",
-        timestamp: 1449966000_i64,
+        hash: "000003816de5a8feb130232390a28ac3566d483bde194ae6b503fec96993dffc",
+        timestamp: 1582643058_i64,
         height: 0_u64,
-        nonce: 2174333_u64,
+        nonce: 2058209_u64,
         nbits: Ledger::Block::Pow::MIN_NBITS,
-        previous_hash: Ledger::GENESIS_CREATOR,
-        transactions: genesis_transactions,
-        coinbase: Block::Coinbase.new("Olivia")
+        previous_hash: "a78a4203908a94d91b1a8f6aa65f4d1176d68ba67ced10a32cfb661f40c58b88",
+        transactions: Array(Ledger::Action::Transaction).new,
+        coinbase: Block::Coinbase.new(miner: "Olivia", reward: 1_u64)
       )
 
       Ledger::Repo.blocks[genesis.hash] = genesis
@@ -47,14 +97,14 @@ module Ledger
       height = Ledger::Repo.blocks[tip_hash].height + 1
 
       if height % 20 == 0 # retargeting
-        Cocol.logger.info "Retargeting Now"
         difficulty = CCL::Pow::Utils.retarget(
-          **timespan_from_height(height: height),
+          **timespan_from_tip(hash: tip_hash),
           wanted_timespan: RETARGET_TIMESPAN,
           current_target: CCL::Pow::Utils.calculate_target(
             from: Ledger::Repo.blocks[tip_hash].as(Block::Pow).nbits
           )
         )
+        Cocol.logger.info "New target: #{difficulty}"
       else # last blocks difficulty
         difficulty = Ledger::Repo.blocks[tip_hash].as(Block::Pow).nbits
       end
@@ -64,7 +114,7 @@ module Ledger
         transactions: transactions,
         previous_hash: tip_hash,
         nbits: difficulty,
-        coinbase: Block::Coinbase.new(Node.settings.port.to_s)
+        coinbase: Block::Coinbase.new(miner: Node.settings.miner_address.as(String))
       )
 
       if Ledger::Repo.save(block: new_block)
@@ -72,7 +122,7 @@ module Ledger
         Ledger::Mempool.remove(transactions)
         ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
 
-        spawn { Messenger.broadcast to: "/blocks/pow", body: new_block.to_json }
+        spawn { Messenger::Action::Base.broadcast to: "/blocks/pow", body: new_block.to_json }
 
         spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
         spawn Event.broadcast(Event.block(new_block).to_json)
@@ -88,14 +138,19 @@ module Ledger
       block.hash == sha.hexdigest
     end
 
-    private def timespan_from_height(height : UInt64) : NamedTuple
-      first_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 20]].as(Block::Pow)
-      last_block = Ledger::Repo.blocks[Ledger::Repo.block_at_height[height - 1]].as(Block::Pow)
+    private def timespan_from_tip(hash : String) : NamedTuple
+      last_block = Ledger::Repo.blocks[hash].as(Block::Pow)
+      way_back_block = first_block(hash, 19)
 
       {
-        start_time: first_block.timestamp.to_f64,
+        start_time: way_back_block.timestamp.to_f64,
         end_time:   last_block.timestamp.to_f64,
       }
+    end
+
+    private def first_block(hash : String, count : UInt8)
+      return Ledger::Repo.blocks[hash].as(Block::Pow) if count <= 0_u8
+      first_block(Ledger::Repo.blocks[hash].previous_hash, count - 1_u8)
     end
 
     private def genesis_transactions : Array(Ledger::Action::Transaction)
@@ -127,6 +182,10 @@ module Ledger
         previous_hash: Ledger::GENESIS_CREATOR,
         coinbase: Coinbase.new("3000")
       )
+      # Cocol::Pos::ValidatorPool.add(id: "4001", timestamp: Time.utc.to_unix)
+      # Cocol::Pos::ValidatorPool.add(id: "4002", timestamp: Time.utc.to_unix + 1)
+      # Cocol::Pos::ValidatorPool.add(id: "4003", timestamp: Time.utc.to_unix + 2)
+      # Cocol::Pos::ValidatorPool.add(id: "4004", timestamp: Time.utc.to_unix + 3)
 
       Ledger::Repo.blocks[genesis.hash] = genesis
       Ledger::Repo.finalize(block: genesis.hash)
@@ -176,7 +235,7 @@ module Ledger
     def on_save(block)
       Ledger::Mempool.remove block.transactions
       ProbFin.push(block: block.hash, parent: block.previous_hash)
-      spawn { Messenger.broadcast to: "/blocks/pos", body: block.to_json }
+      spawn { Messenger::Action::Base.broadcast to: "/blocks/pos", body: block.to_json }
       spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
       remove_validator block.coinbase.miner
       add_stakers block.stakes
