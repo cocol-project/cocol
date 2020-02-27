@@ -35,7 +35,9 @@ describe Ledger::Pow do
   describe "Genesis" do
     it "created the genesis block" do
       Ledger::Pow.genesis
-      Ledger::Repo.blocks[Ledger::Repo.block_at_height[0_u64]].previous_hash.must_equal("a78a4203908a94d91b1a8f6aa65f4d1176d68ba67ced10a32cfb661f40c58b88")
+      Ledger::Repo.blocks[
+        Ledger::Repo.block_at_height[0_u64],
+      ].previous_hash.must_equal("a78a4203908a94d91b1a8f6aa65f4d1176d68ba67ced10a32cfb661f40c58b88")
     end
   end
 

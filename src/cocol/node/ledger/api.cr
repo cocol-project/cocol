@@ -58,7 +58,7 @@ post "/blocks/pow" do |env|
   ) if !Ledger::Pow.valid?(block: new_block)
 
   if Ledger::Repo.save(block: new_block)
-    Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Saved: #{new_block.hash}"
+    Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Hash: #{new_block.hash}"
     spawn do
       ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
       Messenger::Action::Base.broadcast to: "/blocks", body: new_block.to_json
@@ -87,8 +87,19 @@ post "/blocks/pos" do |env|
   Ledger::Pos.validate new_block
 end
 
-get "/blocks" do
-  Ledger::Repo.blocks.values.to_json
+get "/inventory/:best_hash" do |env|
+  Ledger::Inventory.call(env.params.url["best_hash"]).to_json
+end
+
+get "/blocks/:hash" do |env|
+  block = Ledger::Repo.blocks[env.params.url["hash"]]?
+  halt(
+    env,
+    status_code: 404,
+    response: "Not found"
+  ) if block.nil?
+
+  block.to_json
 end
 
 # --- Ledger

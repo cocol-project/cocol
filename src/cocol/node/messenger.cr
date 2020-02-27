@@ -104,6 +104,38 @@ module Messenger
         Array(Messenger::Struct::Peer).from_json(response.body)
       end
     end
+
+    module GetBlock
+      include Base
+      extend self
+
+      PATH = "/blocks/:hash"
+
+      def call(block_hash : String, peer : Messenger::Struct::Peer) : Ledger::Block::Pow
+        uri = peer_uri(from: peer)
+        uri.path = PATH.gsub(":hash", block_hash)
+        response = get(from: uri)
+        Cocol.logger.info response.pretty_inspect
+        Ledger::Block::Pow.from_json(response.as(HTTP::Client::Response).body)
+      end
+    end
+
+    module Inventory
+      extend self
+      include Base
+      include Ledger::Block
+
+      PATH = "/inventory/:best_hash"
+
+      def call(peer : Messenger::Struct::Peer, best_hash : BlockHash) : Array(BlockHash)
+        uri = peer_uri(from: peer)
+        uri.path = PATH.gsub(":best_hash", best_hash)
+        response = get(from: uri)
+
+        # Cocol.logger.info response.pretty_inspect
+        Array(BlockHash).from_json(response.as(HTTP::Client::Response).body)
+      end
+    end
   end
 
   def establish_network_position

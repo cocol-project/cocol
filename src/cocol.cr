@@ -68,6 +68,7 @@ module Cocol
         spawn { Cocol::App::Miner.run } if Node.settings.miner
         Ledger::Pow.genesis
         Messenger.establish_network_position if !Node.settings.master
+        spawn { Ledger::Sync.call } if !Node.settings.master
 
         sleep
       end

@@ -14,6 +14,56 @@ require "./messenger"
 module Ledger
   GENESIS_CREATOR = "Olivia"
 
+  module Inventory
+    extend self
+    include Ledger::Block
+
+    def call(best_hash : BlockHash) : Array(BlockHash)
+      peer_best_block = Ledger::Repo.blocks[best_hash]?
+      return Array(BlockHash).new if peer_best_block.nil?
+
+      Ledger::Repo.blocks.map do |k, v|
+        k if v.height > peer_best_block.height
+      end.compact
+    end
+  end
+
+  module Sync
+    extend self
+    include Ledger::Block
+
+    def call
+      Cocol.logger.info "--- START SYNC"
+      loop do
+        sleep 0.5
+        # Cocol.logger.info "--- BEFORE NEXT"
+        next if Messenger::Repo.peers.size == 0
+
+        peer = Messenger::Repo.peers.first
+        inventory = Messenger::Action::Inventory.call(
+          peer: peer,
+          best_hash: Ledger::Util.probfin_tip_hash
+        )
+        # Cocol.logger.info "--- BEFORE BREAK"
+        break if inventory.size == 0
+        # Cocol.logger.info "--- AFTER BREAK"
+
+        inventory.each do |bh|
+          block = Messenger::Action::GetBlock.call(block_hash: bh, peer: peer)
+          next if !Ledger::Pow.valid?(block: block)
+
+          if Ledger::Repo.save(block: block)
+            Cocol.logger.info "SYNCED -- Height: #{block.height} Hash: #{block.hash}"
+            ProbFin.push(block: block.hash, parent: block.previous_hash)
+          end
+        end
+
+        break
+      end
+      Cocol.logger.info "--- SYNC FINISHED"
+    end
+  end
+
   module Pow
     extend self
     include Ledger::Block
@@ -46,7 +96,7 @@ module Ledger
       tip_hash = Ledger::Util.probfin_tip_hash
       height = Ledger::Repo.blocks[tip_hash].height + 1
 
-      if height % 5 == 0 # retargeting
+      if height % 20 == 0 # retargeting
         difficulty = CCL::Pow::Utils.retarget(
           **timespan_from_tip(hash: tip_hash),
           wanted_timespan: RETARGET_TIMESPAN,
@@ -90,7 +140,7 @@ module Ledger
 
     private def timespan_from_tip(hash : String) : NamedTuple
       last_block = Ledger::Repo.blocks[hash].as(Block::Pow)
-      way_back_block = first_block(hash, 4)
+      way_back_block = first_block(hash, 19)
 
       {
         start_time: way_back_block.timestamp.to_f64,
