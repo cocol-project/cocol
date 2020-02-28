@@ -202,7 +202,7 @@ module Ledger
       height = Ledger::Repo.blocks[tip_hash].height + 1
 
       stakes << Ledger::Action::Stake.new(
-        staker: Node.settings.port.to_s,
+        staker: Node.settings.miner_address.as(String),
         amount: 33_u64,
       )
 
@@ -211,7 +211,7 @@ module Ledger
         transactions: transactions,
         stakes: stakes,
         previous_hash: tip_hash,
-        coinbase: Coinbase.new(Node.settings.port.to_s),
+        coinbase: Coinbase.new(Node.settings.miner_address.as(String)),
       )
 
       if Ledger::Repo.save(block: new_block)
@@ -259,7 +259,7 @@ module Ledger
       if Node.settings.miner
         my_turn = CCL::Pos.naive_leader?(
           seed: Ledger::Util.probfin_tip_hash,
-          validator_id: Node.settings.port.to_s
+          validator_id: Node.settings.miner_address.as(String)
         )
         Cocol.logger.debug "MY_TURN: #{my_turn}"
         spawn block_creation_loop if my_turn
