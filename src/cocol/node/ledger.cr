@@ -36,7 +36,6 @@ module Ledger
       Cocol.logger.info "--- START SYNC"
       loop do
         sleep 0.5
-        # Cocol.logger.info "--- BEFORE NEXT"
         next if Messenger::Repo.peers.size == 0
 
         peer = Messenger::Repo.peers.first
@@ -44,9 +43,7 @@ module Ledger
           peer: peer,
           best_hash: Ledger::Util.probfin_tip_hash
         )
-        # Cocol.logger.info "--- BEFORE BREAK"
         break if inventory.size == 0
-        # Cocol.logger.info "--- AFTER BREAK"
 
         inventory.each do |bh|
           block = Messenger::Action::GetBlock.call(block_hash: bh, peer: peer)
