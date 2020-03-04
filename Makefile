@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := development
 
 development:
-	shards build cocol -Dpreview_mt --progress --error-trace
+	crystal build -Dpreview_mt --progress --error-trace -o bin/cocol ./src/cocol.cr
 
 quick:
 	crystal build src/cocol -Dpreview_mt --progress --error-trace

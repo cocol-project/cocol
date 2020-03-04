@@ -6,19 +6,15 @@ shards:
 
   ccl-pow:
     github: cocol-project/ccl-pow
-    commit: f9fb5943039e24438cdf00654cad3ef6818417cd
+    commit: 4c41a9d97a8765167f8b4e570fbeeb48322a0bff
 
-  commander:
-    github: mrrooijen/commander
-    version: 0.3.5
+  clim:
+    github: at-grandpa/clim
+    version: 0.10.0
 
   exception_page:
     github: crystal-loot/exception_page
     version: 0.1.4
-
-  icr:
-    github: crystal-community/icr
-    commit: 7da354f5c0a356aee77e68fc63c87e2ad35da7fb
 
   kemal:
     github: kemalcr/kemal
@@ -43,10 +39,6 @@ shards:
   radix:
     github: luislavena/radix
     version: 0.3.9
-
-  readline:
-    github: crystal-lang/crystal-readline
-    commit: 0fb7d186da8e1b157998d98d1c96e99699b791eb
 
   secp256k1:
     github: q9f/secp256k1.cr

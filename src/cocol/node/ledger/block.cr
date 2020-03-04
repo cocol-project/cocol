@@ -71,7 +71,7 @@ module Ledger::Block
   end
 
   struct Pow < Abstract
-    MIN_NBITS = "20000010"
+    MIN_NBITS = "20000100"
     getter nonce : UInt64
     getter nbits : String
 
@@ -100,6 +100,10 @@ module Ledger::Block
     def hash_seed : BlockHashSeed
       transactions = @transactions.map { |txn| txn.hash }.join("")
       "#{@height}#{@timestamp}#{transactions}#{@previous_hash}#{@coinbase}"
+    end
+
+    def self.min_target
+      CCL::Pow::Utils.calculate_target(MIN_NBITS)
     end
 
     def calc_hash

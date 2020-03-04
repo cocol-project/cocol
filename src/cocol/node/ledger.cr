@@ -39,23 +39,22 @@ module Ledger
         next if Messenger::Repo.peers.size == 0
 
         peer = Messenger::Repo.peers.first
-        inventory = Messenger::Action::Inventory.call(
+        best_hash = Ledger::Util.probfin_tip_hash
+        peer_inventory = Messenger::Action::Inventory.call(
           peer: peer,
-          best_hash: Ledger::Util.probfin_tip_hash
+          best_hash: best_hash
         )
-        break if inventory.size == 0
+        break if peer_inventory.size == 0
+        my_inventory = Ledger::Inventory.call(best_hash)
+        inventory = peer_inventory - my_inventory
 
         inventory.each do |bh|
+          next if Ledger::Repo.blocks[bh]?
           block = Messenger::Action::GetBlock.call(block_hash: bh, peer: peer)
           next if !Ledger::Pow.valid?(block: block)
 
-          if Ledger::Repo.save(block: block)
-            Cocol.logger.info "SYNCED -- Height: #{block.height} Hash: #{block.hash}"
-            ProbFin.push(block: block.hash, parent: block.previous_hash)
-          end
+          Ledger::Pow.submit(block, broadcast: false)
         end
-
-        break
       end
       Cocol.logger.info "--- SYNC FINISHED"
     end
@@ -99,7 +98,8 @@ module Ledger
           wanted_timespan: RETARGET_TIMESPAN,
           current_target: CCL::Pow::Utils.calculate_target(
             from: Ledger::Repo.blocks[tip_hash].as(Block::Pow).nbits
-          )
+          ),
+          min_target: Ledger::Block::Pow.min_target
         )
         Cocol.logger.info "New target: #{difficulty}"
       else # last blocks difficulty
@@ -114,16 +114,8 @@ module Ledger
         coinbase: Block::Coinbase.new(miner: Node.settings.miner_address.as(String))
       )
 
-      if Ledger::Repo.save(block: new_block)
-        Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Mined: #{new_block.hash}"
-        Ledger::Mempool.remove(transactions)
-        ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
-
-        spawn { Messenger::Action::Base.broadcast to: "/blocks/pow", body: new_block.to_json }
-
-        spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
-        spawn Event.broadcast(Event.block(new_block).to_json)
-      end
+      Cocol.logger.info "--- MINED Height: #{new_block.height} NBits: #{new_block.nbits} Block: #{new_block.hash}"
+      submit(new_block)
 
       new_block
     end
@@ -133,6 +125,28 @@ module Ledger
       sha.update("#{block.nonce}#{block.hash_seed}")
 
       block.hash == sha.hexdigest
+    end
+
+    def submit(block : Ledger::Block::Pow, broadcast = true)
+      return if !Ledger::Repo.save block
+
+      Cocol.logger.info "Height: #{block.height} NBits: #{block.nbits} Block: #{block.hash}"
+
+      Ledger::Mempool.remove(block.transactions)
+      ProbFin.push(block: block.hash, parent: block.previous_hash)
+      result = ProbFin.finalize(
+        from: Ledger::Repo.ledger.last
+      )
+      if result.class == BlockHash
+        Ledger::Repo.finalize(result.as(BlockHash))
+      end
+
+      if broadcast
+        spawn { Messenger::Action::Base.broadcast to: "/blocks/pow", body: block.to_json }
+
+        spawn Event.broadcast(Event.update("onInitialUpdate").to_json)
+        spawn Event.broadcast(Event.block(block).to_json)
+      end
     end
 
     private def timespan_from_tip(hash : String) : NamedTuple
