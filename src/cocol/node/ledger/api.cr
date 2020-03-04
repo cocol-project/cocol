@@ -102,7 +102,7 @@ end
 
 get "/blocks/pending" do
   {
-    dag: ProbFin::Chain.dag.map { |k, _v| k },
-    orphans: ProbFin::Chain.orphans.map { |k, _v| k }
+    dag:     ProbFin::Chain.dag.map { |k, _v| k },
+    orphans: ProbFin::Chain.orphans.map { |k, _v| k },
   }.to_json
 end
