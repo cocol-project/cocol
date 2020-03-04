@@ -57,14 +57,7 @@ post "/blocks/pow" do |env|
     response: "Invalid Block"
   ) if !Ledger::Pow.valid?(block: new_block)
 
-  if Ledger::Repo.save(block: new_block)
-    Cocol.logger.info "Height: #{new_block.height} NBits: #{new_block.nbits} Hash: #{new_block.hash}"
-    spawn do
-      ProbFin.push(block: new_block.hash, parent: new_block.previous_hash)
-      Messenger::Action::Base.broadcast to: "/blocks", body: new_block.to_json
-      Event.broadcast(Event.update("onInitialUpdate").to_json)
-    end
-  end
+  Ledger::Pow.submit(new_block)
 end
 
 post "/blocks/pos" do |env|
@@ -103,6 +96,13 @@ get "/blocks/:hash" do |env|
 end
 
 # --- Ledger
-get "/ledger" do
+get "/blocks/finalized" do
   Ledger::Repo.ledger.to_json
+end
+
+get "/blocks/pending" do
+  {
+    dag: ProbFin::Chain.dag.map { |k, _v| k },
+    orphans: ProbFin::Chain.orphans.map { |k, _v| k }
+  }.to_json
 end

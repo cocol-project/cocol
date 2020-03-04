@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at # http://mozilla.org/MPL/2.0/
+
 require "./messenger/**"
 
 module Messenger
@@ -115,7 +119,6 @@ module Messenger
         uri = peer_uri(from: peer)
         uri.path = PATH.gsub(":hash", block_hash)
         response = get(from: uri)
-        Cocol.logger.info response.pretty_inspect
         Ledger::Block::Pow.from_json(response.as(HTTP::Client::Response).body)
       end
     end
@@ -132,7 +135,6 @@ module Messenger
         uri.path = PATH.gsub(":best_hash", best_hash)
         response = get(from: uri)
 
-        # Cocol.logger.info response.pretty_inspect
         Array(BlockHash).from_json(response.as(HTTP::Client::Response).body)
       end
     end

@@ -18,6 +18,7 @@ dependencies:
     version: ~> 0.26.0
   ccl-pow:
     github: cocol-project/ccl-pow
+    branch: master
   probfin:
     github: cocol-project/probfin
     version: 0.2.1
