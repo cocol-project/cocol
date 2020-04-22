@@ -6,7 +6,7 @@ shards:
 
   ccl-pow:
     github: cocol-project/ccl-pow
-    commit: 4c41a9d97a8765167f8b4e570fbeeb48322a0bff
+    commit: cee2b7994be4f780b8fe505d50e0587f39173596
 
   clim:
     github: at-grandpa/clim
@@ -26,7 +26,7 @@ shards:
 
   minitest:
     github: ysbaddaden/minitest.cr
-    version: 0.5.0
+    version: 0.5.1
 
   popcorn:
     github: icyleaf/popcorn
@@ -42,7 +42,7 @@ shards:
 
   secp256k1:
     github: q9f/secp256k1.cr
-    version: 0.3.1
+    version: 0.3.2
 
   sha3:
     github: OscarBarrett/crystal-sha3
@@ -50,5 +50,5 @@ shards:
 
   totem:
     github: icyleaf/totem
-    version: 0.6.0
+    version: 0.6.1
 

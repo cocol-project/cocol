@@ -1,7 +1,7 @@
 name: cocol
-version: v0.4.0
+version: v0.4.1
 license: MPL-2.0
-crystal: 0.33.0
+crystal: 0.34.0
 authors:
   - Cristian Șerb <cserb@pm.me>
 

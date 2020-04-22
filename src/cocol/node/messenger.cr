@@ -36,7 +36,7 @@ module Messenger
           client.close
           response
         rescue
-          Cocol.logger.warn "Peer is not responding at POST-#{uri}"
+          Cocol.logger.warn { "Peer is not responding at POST-#{uri}" }
           nil
         end
       end
@@ -54,7 +54,7 @@ module Messenger
           client.close
           response
         rescue
-          Cocol.logger.warn "Peer is not responding at GET-#{uri}"
+          Cocol.logger.warn { "Peer is not responding at GET-#{uri}" }
           nil
         end
       end

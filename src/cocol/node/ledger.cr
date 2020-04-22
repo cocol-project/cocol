@@ -33,7 +33,7 @@ module Ledger
     include Ledger::Block
 
     def call
-      Cocol.logger.info "--- START SYNC"
+      Cocol.logger.info { "--- START SYNC" }
       loop do
         sleep 0.5
         next if Messenger::Repo.peers.size == 0
@@ -56,7 +56,7 @@ module Ledger
           Ledger::Pow.submit(block, broadcast: false)
         end
       end
-      Cocol.logger.info "--- SYNC FINISHED"
+      Cocol.logger.info { "--- SYNC FINISHED" }
     end
   end
 
@@ -101,7 +101,7 @@ module Ledger
           ),
           min_target: Ledger::Block::Pow.min_target
         )
-        Cocol.logger.info "New target: #{difficulty}"
+        Cocol.logger.info { "New target: #{difficulty}" }
       else # last blocks difficulty
         difficulty = Ledger::Repo.blocks[tip_hash].as(Block::Pow).nbits
       end
@@ -114,7 +114,7 @@ module Ledger
         coinbase: Block::Coinbase.new(miner: Node.settings.miner_address.as(String))
       )
 
-      Cocol.logger.info "--- MINED Height: #{new_block.height} NBits: #{new_block.nbits} Block: #{new_block.hash}"
+      Cocol.logger.info { "--- MINED Height: #{new_block.height} NBits: #{new_block.nbits} Block: #{new_block.hash}" }
       submit(new_block)
 
       new_block
@@ -130,7 +130,7 @@ module Ledger
     def submit(block : Ledger::Block::Pow, broadcast = true)
       return if !Ledger::Repo.save block
 
-      Cocol.logger.info "Height: #{block.height} NBits: #{block.nbits} Block: #{block.hash}"
+      Cocol.logger.info { "Height: #{block.height} NBits: #{block.nbits} Block: #{block.hash}" }
 
       Ledger::Mempool.remove(block.transactions)
       ProbFin.push(block: block.hash, parent: block.previous_hash)
@@ -226,7 +226,7 @@ module Ledger
       )
 
       if Ledger::Repo.save(block: new_block)
-        Cocol.logger.info "Height: #{new_block.height} Mined: #{new_block.hash[-7..-1]}"
+        Cocol.logger.info { "Height: #{new_block.height} Mined: #{new_block.hash[-7..-1]}" }
         spawn Event.broadcast(Event.block(new_block).to_json)
         on_save new_block
       end
@@ -238,7 +238,7 @@ module Ledger
 
     def validate(block : Ledger::Block::Pos) : Nil
       if Ledger::Repo.save(block: block)
-        Cocol.logger.debug "BLOCK Height: #{block.height} | Saved: #{block.hash[-7..-1]}"
+        Cocol.logger.debug { "BLOCK Height: #{block.height} | Saved: #{block.hash[-7..-1]}" }
         on_save block
       end
     end
@@ -255,15 +255,15 @@ module Ledger
 
     def add_stakers(stakes : Array(Ledger::Action::Stake)) : Nil
       stakes.each do |s|
-        Cocol.logger.debug "VALIDATOR ADDED: #{s.staker}"
+        Cocol.logger.debug { "VALIDATOR ADDED: #{s.staker}" }
         CCL::Pos::ValidatorPool.add(id: s.staker, timestamp: s.timestamp)
       end
     end
 
     def remove_validator(id : String)
-      Cocol.logger.debug "VALIDATOR REMOVED: #{id}"
+      Cocol.logger.debug { "VALIDATOR REMOVED: #{id}" }
       CCL::Pos::ValidatorPool.remove id
-      Cocol.logger.debug "VALIDATORS: #{CCL::Pos::ValidatorPool.validators}"
+      Cocol.logger.debug { "VALIDATORS: #{CCL::Pos::ValidatorPool.validators}" }
     end
 
     def new_block_if_leader
@@ -272,13 +272,13 @@ module Ledger
           seed: Ledger::Util.probfin_tip_hash,
           validator_id: Node.settings.miner_address.as(String)
         )
-        Cocol.logger.debug "MY_TURN: #{my_turn}"
+        Cocol.logger.debug { "MY_TURN: #{my_turn}" }
         spawn block_creation_loop if my_turn
       end
     end
 
     def block_creation_loop
-      Cocol.logger.info "Creation loop triggered"
+      Cocol.logger.info { "Creation loop triggered" }
       threshold = 2
       loop do
         sleep 0.333

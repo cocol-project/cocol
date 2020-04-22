@@ -66,7 +66,7 @@ module Cocol
         Node.settings.miner_address = opts.address.as(String) if opts.address
         Node.settings.master = opts.master if opts.master
 
-        Cocol.logger.info Node.settings.inspect
+        Cocol.logger.info { Node.settings.inspect }
 
         spawn { Cocol::App::Api.run port: Node.settings.port }
         spawn { Cocol::App::Miner.run } if Node.settings.miner
