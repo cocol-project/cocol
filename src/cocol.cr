@@ -50,17 +50,19 @@ module Cocol
       version "Version 0.3.0"
       option "-h HOST", "--host=HOST", type: String, desc: "Change host if running a public node (default localhost)"
       option "-p NUMBER", "--port=NUMBER", type: UInt32, desc: "Change port (default 3001)"
+      option "-n NAME", "--name=NAME", type: String, desc: "Provide a unique name for your node"
       option "-x NUMBER", "--max-connections=NUMBER", type: UInt16, desc: "Change max-connections (default 5)"
       option "-M", "--miner", type: Bool, desc: "Start as miner (default false)"
       option "-a", "--address=ADDRESS", type: String, desc: "Required for the block reward if started as miner"
       option "-m", "--master", type: Bool, desc: "Start as master (default false)"
       run do |opts, _args|
         if opts.miner && !opts.address
-          puts "You need to pass an address for the block reward `--address`"
+          puts "You need to provide an address for the block reward `--address`"
           return
         end
         Node.settings.host = opts.host.as(String) if opts.host
         Node.settings.port = opts.port.as(UInt32) if opts.port
+        Node.settings.name = opts.name.as(String) if opts.name
         Node.settings.max_connections = opts.max_connections.as(UInt16) if opts.max_connections
         Node.settings.miner = opts.miner if opts.miner
         Node.settings.miner_address = opts.address.as(String) if opts.address

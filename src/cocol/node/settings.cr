@@ -7,13 +7,14 @@ module Node
     getter ident : String
     property host : String = "localhost"
     property port : UInt32 = 3001_u32
+    property name : String = "Unknown"
     property max_connections : UInt16 = 5_u16
     property miner : Bool = false
     property miner_address : String?
     property master : Bool = false
 
     def initialize
-      @ident = Random::Secure.base64(6)
+      @ident = Random::Secure.urlsafe_base64(10)
     end
 
     def peer_info
