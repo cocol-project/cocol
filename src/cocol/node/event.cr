@@ -62,10 +62,9 @@ module Event
 
   def peer(peer : Messenger::Struct::Peer) : PeerConnectionEvent
     {
-      event:          "onConnection",
-      node_ident:     Node.settings.ident,
-      node_is_master: Node.settings.master,
-      peer_ident:     peer.ident,
+      event: "onConnection",
+      node:  {ident: Node.settings.ident, master: Node.settings.master},
+      peer:  {ident: peer.ident, host: peer.host, port: peer.port},
     }
   end
 
