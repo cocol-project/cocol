@@ -30,13 +30,14 @@ module Event
 
   def update(event : String) : NamedTuple
     update = {
-      event: event,
-      peers: Messenger::Repo.peers.map { |peer| {port: peer.port, host: peer.host, ident: peer.ident} },
-      port:  Node.settings.port,
-      miner: Node.settings.miner,
-      host:  Node.settings.host,
-      ident: Node.settings.ident,
-      name:  Node.settings.name,
+      event:  event,
+      peers:  Messenger::Repo.peers.map { |peer| {port: peer.port, host: peer.host, ident: peer.ident} },
+      port:   Node.settings.port,
+      miner:  Node.settings.miner,
+      host:   Node.settings.host,
+      ident:  Node.settings.ident,
+      name:   Node.settings.name,
+      master: Node.settings.master,
     }
 
     latest_block = Ledger::Repo.blocks[Ledger::Util.probfin_tip_hash]
@@ -61,9 +62,10 @@ module Event
 
   def peer(peer : Messenger::Struct::Peer) : PeerConnectionEvent
     {
-      event:     "onConnection",
-      node_ident: Node.settings.ident,
-      peer_ident: peer.ident,
+      event:          "onConnection",
+      node_ident:     Node.settings.ident,
+      node_is_master: Node.settings.master,
+      peer_ident:     peer.ident,
     }
   end
 
