@@ -1,5 +1,5 @@
 master:
-  host: localhost
+  host: master.cocol.io
   port: 3000
 
 node:
